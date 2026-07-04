@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroQueue | Global Premium Flights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --warm-white: #FDFBF7;
+            --accent-cream: #FAF7F2;
+            --indigo-prime: #4f46e5;
+            --text-main: #1e293b;
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+        }
+ 
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+        body{background: var(--warm-white); color: var(--text-main); overflow-x: hidden;}
+ 
+        .hero {
+            height: 380px;
+            background: linear-gradient(rgba(253, 251, 247, 0.2), rgba(253, 251, 247, 1)), 
+                        url('https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?auto=format&fit=crop&q=80&w=1600') center/cover no-repeat fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .hero h1 { font-size: 3rem; font-weight: 700; text-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+ 
+        nav{display:flex;justify-content:space-between;align-items:center;padding:15px 7%;background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); position:sticky;top:0;z-index:1000; border-bottom: 1px solid #eef2f6;}
+        .logo{font-size:1.6rem;font-weight:800;color: var(--indigo-prime);}
+ 
+        .modify-container {
+            max-width: 1100px;
+            margin: -70px auto 20px;
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+            display: grid;
+            grid-template-columns: 1.5fr 1.5fr 1fr auto;
+            gap: 20px;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+            border: 1px solid #f1f5f9;
+        }
+ 
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; }
+        .input-group input { 
+            padding: 14px; border: 1.5px solid #f1f5f9; border-radius: 14px; font-size: 0.95rem; 
+            background: #fafafa; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--indigo-prime); background: white; }
+ 
+        .modify-btn {
+            background: var(--indigo-prime); color: white; border: none; padding: 0 35px; 
+            border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; height: 52px; align-self: flex-end;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+        }
+        .modify-btn:hover { background: #3730a3; transform: translateY(-2px); }
+ 
+        .privacy-link-container {
+            max-width: 1100px;
+            margin: -10px auto 30px;
+            text-align: right;
+            padding-right: 15px;
+        }
+        .privacy-trigger-link {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .privacy-trigger-link:hover {
+            color: var(--indigo-prime);
+            text-decoration: underline;
+        }
+ 
+        .offers-section {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            padding: 0 10px;
+            position: relative;
+        }
+        .carousel-view-wrapper {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+        .offers-container {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            width: 100%;
+        }
+        
+        .offer-card {
+            min-width: 100%;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            color: var(--text-main);
+            border: 1px solid #eef2f6;
+            cursor: pointer;
+        }
+        
+        .offer-image-box {
+            height: 100%;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            min-height: 200px;
+        }
+        
+        .offer-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+        .offer-tag {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+        .offer-body h4 { font-size: 1.3rem; font-weight: 700; color: #1e293b; }
+        .offer-body p { font-size: 0.9rem; color: #64748b; line-height: 1.5; }
+        
+        .promo-row {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .promo-code-btn {
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: #f0f7ff;
+            border: 1px dashed var(--primary);
+            padding: 6px 14px;
+            border-radius: 8px;
+            color: var(--primary);
+        }
+ 
+        .carousel-btn {
+            position: absolute;
+            top: 55%;
+            transform: translateY(-50%);
+            background: white;
+            border: 1px solid #e2e8f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .carousel-btn:hover { background: var(--indigo-prime); color: white; border-color: var(--indigo-prime); }
+        .carousel-btn.prev { left: -20px; }
+        .carousel-btn.next { right: -20px; }
+ 
+        .main { max-width: 1150px; margin: auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding-bottom: 100px; }
+ 
+        .sidebar { background: white; padding: 25px; border-radius: 24px; border: 1px solid #f1f5f9; height: fit-content; position: sticky; top: 100px; }
+        .sidebar h3 { font-size: 1.1rem; margin-bottom: 20px; }
+        .filter-group { margin-bottom: 25px; }
+        .filter-group label { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; margin-bottom: 15px; cursor: pointer; }
+ 
+        .flight-card {
+            background: white; border-radius: 24px; margin-bottom: 20px; display: grid; grid-template-columns: 160px 1fr 200px;
+            border: 1px solid #f1f5f9; transition: 0.4s ease; overflow: hidden;
+        }
+        .flight-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+ 
+        .airline-box { padding: 30px; text-align: center; border-right: 1px solid #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .airline-logo{
+            width: 100px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+        /* Fallback text logo for airlines without image */
+        .airline-logo-text {
+            width: 100px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--indigo-prime);
+            text-align: center;
+            padding: 4px;
+        }
+        .airline-name { font-size: 0.85rem; font-weight: 700; display: block; }
+ 
+        .route-box { padding: 30px 45px; display: flex; align-items: center; justify-content: space-between; }
+        .time { font-size: 1.6rem; font-weight: 700; }
+        .city-code { font-size: 0.9rem; color: #94a3b8; font-weight: 600; }
+        
+        .path-line { flex: 1; margin: 0 40px; height: 2px; background: #e2e8f0; position: relative; }
+ 
+        .price-box { padding: 30px; text-align: right; background: var(--accent-cream); display: flex; flex-direction: column; justify-content: center; }
+        .price-val { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
+        .book-btn { background: var(--indigo-prime); color: white; border: none; padding: 12px; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: 600; }
+ 
+        .offer-detail-overlay, .privacy-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000;
+            justify-content: center; align-items: flex-end;
+        }
+        .offer-detail-content, .privacy-content {
+            background: white; width: 100%; max-width: 500px;
+            border-top-left-radius: 30px; border-top-right-radius: 30px;
+            padding: 30px; color: var(--text-main);
+            animation: slideUp 0.3s ease-out;
+        }
+        .privacy-content {
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .privacy-body-scroll {
+            overflow-y: auto;
+            margin: 20px 0;
+            padding-right: 5px;
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+        .privacy-body-scroll h4 {
+            color: #1e293b;
+            margin: 15px 0 5px 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .detail-code-box {
+            background: #f8fafc; border: 2px dashed #cbd5e1; padding: 15px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center; margin: 20px 0;
+        }
+        .copy-trigger {
+            color: var(--primary); font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+ 
+        @media(max-width: 900px) {
+            .modify-container { grid-template-columns: 1fr; margin-top: -40px; }
+            .offer-card { grid-template-columns: 1fr; }
+            .offer-image-box { height: 140px; min-height: auto; }
+            .main { grid-template-columns: 1fr; }
+            .flight-card { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+ 
+<nav>
+    <div class="logo">AeroQueue</div>
+    <div style="font-weight: 600;">Worldwide Bookings</div>
+</nav>
+ 
+<div class="hero">
+    <h1>Explore the Globe</h1>
+    <p>Premium flight experiences tailored for you</p>
+</div>
+ 
+<div class="modify-container">
+    <div class="input-group">
+        <label>From</label>
+        <input type="text" id="fromPlace" list="global-cities" value="New Delhi (DEL)">
+    </div>
+    <div class="input-group">
+        <label>To</label>
+        <input type="text" id="toPlace" list="global-cities" value="London (LHR)">
+    </div>
+    <div class="input-group">
+        <label>Departure Date</label>
+        <input type="date" id="flightDate" value="2026-05-18">
+    </div>
+    <button class="modify-btn" onclick="updateResults()">Modify Search</button>
+</div>
+ 
+<div class="privacy-link-container">
+    <span class="privacy-trigger-link" onclick="openPrivacyModal()">🔒 AeroQueue Search Privacy Policy</span>
+</div>
+ 
+<div class="offers-section" id="offersSection">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h4 style="font-size: 1.1rem; color: var(--text-main); margin: 0; font-weight:600;">Special Offers & Discounts 🎁 <span style="font-size: 0.8rem; font-weight: 400; color:#94a3b8; margin-left: 10px;">(Auto-sliding)</span></h4>
+    </div>
+    
+    <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+    <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+ 
+    <div class="carousel-view-wrapper">
+        <div class="offers-container" id="offersContainer">
+            <div class="offer-card" onclick="openOfferDetail('FLYNEW30', 'First Booking Discount', 'Get a flat $30 off on your first flight booking. Valid for new customers on international routes.', 'This offer ends on December 31, 2026.')">
+                <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1570126618953-d437176e8c79?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="offer-body">
+                    <span class="offer-tag">New User</span>
+                    <h4>Flat $30 OFF First Booking</h4>
+                    <p>Register today and save big on your first international flight with AeroQueue.</p>
+                    <div class="promo-row">
+                        <span style="font-size: 0.7rem; color: #94a3b8;">Limited Offer</span>
+                        <div class="promo-code-btn">FLYNEW30</div>
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="offer-card" onclick="openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer ends on July 15, 2026.')">
+                <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="offer-body">
+                    <span class="offer-tag">Student Deal</span>
+                    <h4>Extra 10% Off for Students</h4>
+                    <p>Verify your enrollment status and get flexible structural travel perks worldwide.</p>
+                    <div class="promo-row">
+                        <span style="font-size: 0.7rem; color: #94a3b8;">Valid ID Req.</span>
+                        <div class="promo-code-btn">STUDENT24</div>
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="offer-card" onclick="openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on June 30, 2026.')">
+                <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="offer-body">
+                    <span class="offer-tag">Bank Offer</span>
+                    <h4>HDFC Bank Cashback Plan</h4>
+                    <p>Unlock instant payment value using priority banking credentials at checkout.</p>
+                    <div class="promo-row">
+                        <span style="font-size: 0.7rem; color: #94a3b8;">T&C Apply</span>
+                        <div class="promo-code-btn">HDFCSAVE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<datalist id="global-cities">
+    <option value="New York (JFK)">
+    <option value="London (LHR)">
+    <option value="Dubai (DXB)">
+    <option value="Singapore (SIN)">
+    <option value="Paris (CDG)">
+    <option value="Tokyo (HND)">
+    <option value="Mumbai (BOM)">
+    <option value="New Delhi (DEL)">
+    <option value="Hyderabad (HYD)">
+    <option value="Bangkok (BKK)">
+    <option value="Sydney (SYD)">
+    <option value="Toronto (YYZ)">
+    <option value="Frankfurt (FRA)">
+    <option value="Hong Kong (HKG)">
+    <option value="San Francisco (SFO)">
+    <option value="Amsterdam (AMS)">
+    <option value="Istanbul (IST)">
+    <option value="Los Angeles (LAX)">
+    <option value="Zurich (ZRH)">
+</datalist>
+ 
+<div class="main">
+    <aside class="sidebar">
+        <h3>Filters</h3>
+        <div class="filter-group">
+            <p style="font-size:0.75rem; font-weight:800; color:#94a3b8; margin-bottom:15px; letter-spacing:1px">CABIN CLASS</p>
+            <label><input type="checkbox" checked> Economy</label>
+            <label><input type="checkbox"> Business</label>
+            <label><input type="checkbox"> First Class</label>
+        </div>
+        <div class="filter-group" id="airline-filters">
+            <p style="font-size:0.75rem; font-weight:800; color:#94a3b8; margin-bottom:15px; letter-spacing:1px">AIRLINES</p>
+            <label><input type="checkbox" value="Emirates" checked onchange="updateResults()"> Emirates</label>
+            <label><input type="checkbox" value="Qatar Airways" checked onchange="updateResults()"> Qatar Airways</label>
+            <label><input type="checkbox" value="Singapore Airlines" checked onchange="updateResults()"> Singapore Airlines</label>
+            <label><input type="checkbox" value="Air India" checked onchange="updateResults()"> Air India</label>
+            <label><input type="checkbox" value="British Airways" checked onchange="updateResults()"> British Airways</label>
+            <label><input type="checkbox" value="Virgin Atlantic" checked onchange="updateResults()"> Virgin Atlantic</label>
+            <label><input type="checkbox" value="Air France" checked onchange="updateResults()"> Air France</label>
+            <label><input type="checkbox" value="ANA" checked onchange="updateResults()"> ANA</label>
+            <label><input type="checkbox" value="Thai Airways" checked onchange="updateResults()"> Thai Airways</label>
+            <label><input type="checkbox" value="IndiGo" checked onchange="updateResults()"> IndiGo</label>
+            <label><input type="checkbox" value="Vistara" checked onchange="updateResults()"> Vistara</label>
+            <label><input type="checkbox" value="Lufthansa" checked onchange="updateResults()"> Lufthansa</label>
+            <label><input type="checkbox" value="KLM" checked onchange="updateResults()"> KLM</label>
+            <label><input type="checkbox" value="Turkish Airlines" checked onchange="updateResults()"> Turkish Airlines</label>
+            <label><input type="checkbox" value="Cathay Pacific" checked onchange="updateResults()"> Cathay Pacific</label>
+            <label><input type="checkbox" value="United Airlines" checked onchange="updateResults()"> United Airlines</label>
+            <label><input type="checkbox" value="Air Canada" checked onchange="updateResults()"> Air Canada</label>
+            <label><input type="checkbox" value="Swiss" checked onchange="updateResults()"> Swiss</label>
+            <label><input type="checkbox" value="Qantas" checked onchange="updateResults()"> Qantas</label>
+        </div>
+    </aside>
+ 
+    <section id="flight-list"></section>
+</div>
+ 
+<div class="offer-detail-overlay" id="offerOverlay" onclick="closeOfferDetail()">
+    <div class="offer-detail-content" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h2 id="detailTitle" style="font-size: 1.4rem; margin-bottom: 5px;">Offer Title</h2>
+                <p id="detailDesc" style="color: #64748b; font-size: 0.9rem; margin-bottom: 8px;">Terms and conditions...</p>
+                <p id="detailExpiry" style="color: #e11d48; font-size: 0.85rem; font-weight: 700;"></p>
+            </div>
+            <span onclick="closeOfferDetail()" style="cursor:pointer; font-size: 1.8rem; color: #94a3b8;">&times;</span>
+        </div>
+        <div class="detail-code-box">
+            <div>
+                <span style="font-size: 0.75rem; color: #94a3b8; display: block;">PROMO CODE</span>
+                <span id="detailCode" style="font-weight: 800; font-size: 1.2rem; color: var(--primary);">FLY30</span>
+            </div>
+            <span id="copyBtnText" class="copy-trigger" onclick="copyCode()">COPY</span>
+        </div>
+        <button class="modify-btn" style="width:100%;" onclick="closeOfferDetail()">USE OFFER</button>
+    </div>
+</div>
+ 
+<div class="privacy-overlay" id="privacyOverlay" onclick="closePrivacyModal()">
+    <div class="privacy-content" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 1.3rem; font-weight: 700;">Privacy & Data Notice</h2>
+            <span onclick="closePrivacyModal()" style="cursor:pointer; font-size: 1.8rem; color: #94a3b8; line-height: 1;">&times;</span>
+        </div>
+        
+        <div class="privacy-body-scroll">
+            <p>Welcome to AeroQueue. Your search privacy is structurally protected by our unified system standards.</p>
+            
+            <h4>1. Information Collection</h4>
+            <p>We process your designated starting airport, destination point, cabin variables, and selected travel dates locally to fetch relevant premium flight arrays securely.</p>
+            
+            <h4>2. How Data is Used</h4>
+            <p>Search queries are parsed efficiently to structure flight cards or to carry over dynamic state entries to your booking confirmation checkout sequences.</p>
+            
+            <h4>3. Third-Party Sharing</h4>
+            <p>AeroQueue routes information securely to selected global partner carriers (such as Emirates, Air India, or Qatar Airways) only when you initiate explicit booking sequences.</p>
+            
+            <h4>4. Cookie Configurations</h4>
+            <p>We utilize lightweight storage elements (like LocalStorage configurations) to cleanly remember your last query inputs, eliminating redundant manual typing upon page refresh.</p>
+        </div>
+        
+        <button class="modify-btn" style="width:100%;" onclick="closePrivacyModal()">I UNDERSTAND</button>
+    </div>
+</div>
+ 
+<script>
+// ─── Airline Logo Map ────────────────────────────────────────────────────────
+// Using Brandfetch CDN, airline official asset URLs and reliable CDN mirrors
+const AIRLINE_LOGOS = {
+    "Emirates":           "https://www.gstatic.com/flights/airline_logos/70px/EK.png",
+    "Qatar Airways":      "https://www.gstatic.com/flights/airline_logos/70px/QR.png",
+    "Singapore Airlines": "https://www.gstatic.com/flights/airline_logos/70px/SQ.png",
+    "Air India":          "https://www.gstatic.com/flights/airline_logos/70px/AI.png",
+    "British Airways":    "https://www.gstatic.com/flights/airline_logos/70px/BA.png",
+    "Virgin Atlantic":    "https://www.gstatic.com/flights/airline_logos/70px/VS.png",
+    "Air France":         "https://www.gstatic.com/flights/airline_logos/70px/AF.png",
+    "ANA":                "https://www.gstatic.com/flights/airline_logos/70px/NH.png",
+    "Thai Airways":       "https://www.gstatic.com/flights/airline_logos/70px/TG.png",
+    "IndiGo":             "https://www.gstatic.com/flights/airline_logos/70px/6E.png",
+    "Vistara":            "https://www.gstatic.com/flights/airline_logos/70px/UK.png",
+    "Lufthansa":          "https://www.gstatic.com/flights/airline_logos/70px/LH.png",
+    "KLM":                "https://www.gstatic.com/flights/airline_logos/70px/KL.png",
+    "Turkish Airlines":   "https://www.gstatic.com/flights/airline_logos/70px/TK.png",
+    "Cathay Pacific":     "https://www.gstatic.com/flights/airline_logos/70px/CX.png",
+    "United Airlines":    "https://www.gstatic.com/flights/airline_logos/70px/UA.png",
+    "Air Canada":         "https://www.gstatic.com/flights/airline_logos/70px/AC.png",
+    "Swiss":              "https://www.gstatic.com/flights/airline_logos/70px/LX.png",
+    "Qantas":             "https://www.gstatic.com/flights/airline_logos/70px/QF.png",
+    "AeroQueue":          null
+};
+ 
+function getLogoHTML(airline) {
+    const src = AIRLINE_LOGOS[airline];
+    if (!src) {
+        // Text fallback for unknown/custom airlines
+        const initials = airline.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
+        return `<div class="airline-logo-text">${initials}</div>`;
+    }
+    return `<img 
+        src="${src}" 
+        class="airline-logo" 
+        alt="${airline} logo"
+        onerror="this.outerHTML='<div class=\\'airline-logo-text\\'>${airline.split(' ').map(w=>w[0]).join('').slice(0,3).toUpperCase()}</div>'"
+    >`;
+}
+ 
+// ─── Flight Data ─────────────────────────────────────────────────────────────
+const allFlights = [
+    // DELHI TO LONDON (LHR)
+    { id: 101, airline:"Air India",          no:"AI-111",  dep:"02:15", arr:"07:45", from:"DEL", to:"LHR", dur:"10h 30m", price:42000 },
+    { id: 102, airline:"British Airways",    no:"BA-142",  dep:"10:30", arr:"15:50", from:"DEL", to:"LHR", dur:"10h 50m", price:49000 },
+    { id: 103, airline:"Virgin Atlantic",    no:"VS-301",  dep:"13:20", arr:"18:55", from:"DEL", to:"LHR", dur:"11h 05m", price:46500 },
+    { id: 104, airline:"Emirates",           no:"EK-007",  dep:"04:15", arr:"14:20", from:"DEL", to:"LHR", dur:"14h 35m", price:51200 },
+    { id: 105, airline:"Qatar Airways",      no:"QR-003",  dep:"09:45", arr:"19:10", from:"DEL", to:"LHR", dur:"13h 55m", price:53000 },
+    { id: 106, airline:"Lufthansa",          no:"LH-761",  dep:"02:40", arr:"12:15", from:"DEL", to:"LHR", dur:"14h 05m", price:48000 },
+ 
+    // DELHI TO DUBAI (DXB)
+    { id: 107, airline:"Emirates",           no:"EK-512",  dep:"10:30", arr:"14:45", from:"DEL", to:"DXB", dur:"4h 15m", price:21500 },
+    { id: 108, airline:"Qatar Airways",      no:"QR-571",  dep:"04:00", arr:"06:10", from:"DEL", to:"DXB", dur:"4h 10m", price:22800 },
+    { id: 109, airline:"IndiGo",             no:"6E-023",  dep:"16:20", arr:"20:45", from:"DEL", to:"DXB", dur:"4h 55m", price:14300 },
+    { id: 110, airline:"Air India",          no:"AI-995",  dep:"20:00", arr:"00:15", from:"DEL", to:"DXB", dur:"4h 45m", price:18200 },
+ 
+    // DELHI TO SINGAPORE (SIN)
+    { id: 111, airline:"Singapore Airlines", no:"SQ-421",  dep:"23:10", arr:"07:20", from:"DEL", to:"SIN", dur:"5h 40m", price:28500 },
+    { id: 112, airline:"Air India",          no:"AI-380",  dep:"19:20", arr:"03:15", from:"DEL", to:"SIN", dur:"5h 25m", price:26000 },
+    { id: 113, airline:"Vistara",            no:"UK-115",  dep:"23:45", arr:"08:15", from:"DEL", to:"SIN", dur:"6h 00m", price:27300 },
+ 
+    // MUMBAI TO SINGAPORE (SIN)
+    { id: 114, airline:"Singapore Airlines", no:"SQ-403",  dep:"23:55", arr:"07:20", from:"BOM", to:"SIN", dur:"5h 25m", price:27000 },
+    { id: 115, airline:"Air India",          no:"AI-342",  dep:"00:45", arr:"09:15", from:"BOM", to:"SIN", dur:"6h 00m", price:23500 },
+    { id: 116, airline:"IndiGo",             no:"6E-051",  dep:"11:20", arr:"19:40", from:"BOM", to:"SIN", dur:"5h 50m", price:15800 },
+ 
+    // DOMESTIC: DELHI TO MUMBAI
+    { id: 117, airline:"IndiGo",             no:"6E-2032", dep:"07:00", arr:"09:15", from:"DEL", to:"BOM", dur:"2h 15m", price:3400 },
+    { id: 118, airline:"Vistara",            no:"UK-944",  dep:"17:30", arr:"19:45", from:"DEL", to:"BOM", dur:"2h 15m", price:3800 },
+    { id: 119, airline:"Air India",          no:"AI-865",  dep:"10:00", arr:"12:15", from:"DEL", to:"BOM", dur:"2h 15m", price:3600 }
+];
+ 
+function extractAirportCode(input) {
+    const match = input.match(/\(([^)]+)\)/);
+    return match ? match[1].trim().toUpperCase() : input.trim().toUpperCase();
+}
+ 
+function renderFlights(data, selectedDate) {
+    const list = document.getElementById("flight-list");
+    list.innerHTML = "";
+ 
+    if (data.length === 0) {
+        list.innerHTML = `
+            <div style="text-align:center; padding:40px; background:white; border-radius:24px; grid-column: 1/-1;">
+                <h2 style="color:#94a3b8;">No Flights Found</h2>
+                <p>Try matching your selected airline checkboxes or modify query values.</p>
+            </div>`;
+        return;
+    }
+ 
+    data.forEach(f => {
+        list.innerHTML += `
+        <div class="flight-card">
+            <div class="airline-box">
+                ${getLogoHTML(f.airline)}
+                <span class="airline-name">${f.airline}</span>
+                <div style="font-size:0.7rem; color:#94a3b8; margin-top:5px;">${f.no}</div>
+            </div>
+            <div class="route-box">
+                <div>
+                    <div class="time">${f.dep}</div>
+                    <div class="city-code">${f.from}</div>
+                </div>
+                <div class="path-line">
+                    <div style="font-size:0.7rem; color:#4f46e5; margin-top:12px; text-align:center; font-weight:600;">
+                        ${f.dur}<br>
+                        <span style="color:#94a3b8; font-weight:400;">${selectedDate}</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="time">${f.arr}</div>
+                    <div class="city-code">${f.to}</div>
+                </div>
+            </div>
+            <div class="price-box">
+                <div class="price-val">₹${f.price.toLocaleString()}</div>
+                <div style="font-size:0.7rem; color:#94a3b8">Per Person</div>
+                <button class="book-btn" onclick="
+                    localStorage.setItem('fromCity', document.getElementById('fromPlace').value);
+                    localStorage.setItem('toCity', document.getElementById('toPlace').value);
+                    localStorage.setItem('travelDate', '${selectedDate}');
+                    localStorage.setItem('airlineName', '${f.airline}');
+                    localStorage.setItem('ticketPrice', '${f.price}');
+                    localStorage.setItem('flightId', '${f.id || 1}');
+                    window.location.href='fare.html';
+                ">Book Now</button>
+            </div>
+        </div>`;
+    });
+}
+ 
+async function updateResults() {
+    const fromVal = document.getElementById("fromPlace").value;
+    const toVal = document.getElementById("toPlace").value;
+    const dateVal = document.getElementById("flightDate").value;
+ 
+    const fromCode = extractAirportCode(fromVal);
+    const toCode = extractAirportCode(toVal);
+    const fromCity = fromVal.split(' (')[0].trim();
+    const toCity = toVal.split(' (')[0].trim();
+ 
+    let baseResults = [];
+    try {
+        const resp = await fetch('http://localhost:8080/api/flights');
+        const data = await resp.json();
+        const apiFlights = data.flights || [];
+        
+        baseResults = apiFlights.filter(f => f.origin === fromCity && f.destination === toCity).map(f => ({
+            id: f.id,
+            airline: "AeroQueue",
+            no: f.flightNumber,
+            dep: "10:00",
+            arr: "14:00",
+            from: f.origin,
+            to: f.destination,
+            dur: "4h 00m",
+            price: 50000,
+            capacity: f.capacity,
+            confirmed: f.confirmed
+        }));
+    } catch (e) {
+        console.error("Failed to fetch flights:", e);
+    }
+ 
+    if (baseResults.length === 0) {
+        baseResults = allFlights.filter(flight => flight.from === fromCode && flight.to === toCode);
+        if (baseResults.length === 0) {
+            const fallbackAirlines = [
+                { airline:"Emirates",           no:"EK-" + Math.floor(Math.random()*800+100), dep:"04:15", arr:"11:30", dur:"7h 15m", price:31000 },
+                { airline:"Qatar Airways",      no:"QR-" + Math.floor(Math.random()*800+100), dep:"08:30", arr:"15:45", dur:"7h 15m", price:32400 },
+                { airline:"Singapore Airlines", no:"SQ-" + Math.floor(Math.random()*800+100), dep:"14:20", arr:"21:50", dur:"7h 30m", price:36800 },
+                { airline:"Air India",          no:"AI-" + Math.floor(Math.random()*800+100), dep:"01:10", arr:"08:40", dur:"7h 30m", price:27000 },
+                { airline:"British Airways",    no:"BA-" + Math.floor(Math.random()*800+100), dep:"10:55", arr:"18:15", dur:"7h 20m", price:39500 },
+                { airline:"IndiGo",             no:"6E-" + Math.floor(Math.random()*800+100), dep:"06:00", arr:"13:40", dur:"7h 40m", price:18900 },
+                { airline:"Vistara",            no:"UK-" + Math.floor(Math.random()*800+100), dep:"19:15", arr:"02:45", dur:"7h 30m", price:28400 },
+                { airline:"Lufthansa",          no:"LH-" + Math.floor(Math.random()*800+100), dep:"22:10", arr:"05:35", dur:"7h 25m", price:38000 }
+            ];
+            baseResults = fallbackAirlines.map((f, i) => ({ id: 200 + i, from: fromCode, to: toCode, ...f }));
+        }
+    }
+ 
+    const checkedAirlines = Array.from(document.querySelectorAll('#airline-filters input[type="checkbox"]:checked')).map(cb => cb.value);
+    
+    let finalFilteredResults = baseResults;
+    if (checkedAirlines.length > 0) {
+        finalFilteredResults = baseResults.filter(flight => checkedAirlines.includes(flight.airline) || flight.airline === "AeroQueue");
+    } else {
+        finalFilteredResults = [];
+    }
+ 
+    renderFlights(finalFilteredResults, dateVal);
+}
+ 
+let currentOfferIndex = 0;
+let autoSlideTimer;
+ 
+function moveCarousel(direction) {
+    const container = document.getElementById("offersContainer");
+    const totalCards = container.children.length;
+    currentOfferIndex += direction;
+    if (currentOfferIndex >= totalCards) { currentOfferIndex = 0; }
+    if (currentOfferIndex < 0) { currentOfferIndex = totalCards - 1; }
+    container.style.transform = `translateX(-${currentOfferIndex * 100}%)`;
+}
+ 
+function startAutoSlide() {
+    autoSlideTimer = setInterval(() => { moveCarousel(1); }, 4000);
+}
+function stopAutoSlide() { clearInterval(autoSlideTimer); }
+ 
+const offersSection = document.getElementById('offersSection');
+offersSection.addEventListener('mouseenter', stopAutoSlide);
+offersSection.addEventListener('mouseleave', startAutoSlide);
+ 
+function openOfferDetail(code, title, desc, expiry) {
+    document.getElementById('detailCode').innerText = code;
+    document.getElementById('detailTitle').innerText = title;
+    document.getElementById('detailDesc').innerText = desc;
+    document.getElementById('detailExpiry').innerText = expiry || '';
+    document.getElementById('copyBtnText').innerText = "COPY";
+    document.getElementById('offerOverlay').style.display = 'flex';
+}
+function closeOfferDetail() { document.getElementById('offerOverlay').style.display = 'none'; }
+function copyCode() {
+    const codeText = document.getElementById('detailCode').innerText;
+    navigator.clipboard.writeText(codeText).then(() => {
+        const copyBtn = document.getElementById('copyBtnText');
+        copyBtn.innerText = "COPIED!";
+        setTimeout(() => { copyBtn.innerText = "COPY"; }, 2000);
+    });
+}
+ 
+function openPrivacyModal() { document.getElementById('privacyOverlay').style.display = 'flex'; }
+function closePrivacyModal() { document.getElementById('privacyOverlay').style.display = 'none'; }
+ 
+window.onload = () => {
+    const savedFrom = localStorage.getItem("searchFrom");
+    const savedTo = localStorage.getItem("searchTo");
+    const savedDate = localStorage.getItem("departureDate");
+ 
+    if (savedFrom) { document.getElementById("fromPlace").value = savedFrom; }
+    if (savedTo) { document.getElementById("toPlace").value = savedTo; }
+    if (savedDate) { document.getElementById("flightDate").value = savedDate; }
+ 
+    updateResults();
+    startAutoSlide();
+};
+</script>
+</body>
+</html>

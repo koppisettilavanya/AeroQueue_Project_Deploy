@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard | AeroQueue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #e0f0ff 0%, #c7e2f7 40%, #dbeeff 100%); min-height: 100vh; color: #1e293b; padding: 40px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
+        .ticket-card { border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .logout-btn { background: #ef4444; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #4f46e5; text-decoration: none; font-weight: 600; }
+ 
+        /* Logout overlay */
+        #logout-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        #logout-overlay.show { display: flex; }
+        .logout-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to   { transform: scale(1);    opacity: 1; }
+        }
+        .logout-box .check-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .logout-box h3 {
+            font-size: 1.3rem;
+            color: #10b981;
+            margin: 0 0 8px;
+        }
+        .logout-box p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin: 0;
+        }
+        .countdown-bar {
+            margin-top: 20px;
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .countdown-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            border-radius: 10px;
+            animation: shrink 3s linear forwards;
+        }
+        @keyframes shrink {
+            from { width: 100%; }
+            to   { width: 0%; }
+        }
+    </style>
+</head>
+<body>
+ 
+<div class="container">
+    <a href="Search.html" class="back-link">← Back to Home</a>
+    <h2>User Dashboard</h2>
+    
+    <div id="tickets-container">
+        <p>No booked tickets found.</p>
+    </div>
+ 
+    <div style="margin-top: 30px;">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+ 
+<!-- Logout Success Overlay -->
+<div id="logout-overlay">
+    <div class="logout-box">
+        <div class="check-icon">✅</div>
+        <h3>You have been logged out successfully!</h3>
+        <p>Redirecting you to the login page...</p>
+        <div class="countdown-bar">
+            <div class="countdown-bar-fill" id="bar-fill"></div>
+        </div>
+    </div>
+</div>
+ 
+<script>
+    async function loadDashboard() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "Login.html";
+            return;
+        }
+ 
+        try {
+            const resp = await fetch('http://localhost:8080/api/user/dashboard', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            });
+ 
+            if (resp.ok) {
+                const data = await resp.json();
+                const container = document.getElementById("tickets-container");
+                if (data) {
+                    let profileHtml = `
+                        <div style="background:#f1f5f9; padding:20px; border-radius:12px; margin-bottom:25px;">
+                            <h3 style="margin-top:0; color:#4f46e5;">User Profile</h3>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.9rem;">
+                                <div><strong>Full Name:</strong> ${data.firstName || ''} ${data.lastName || ''}</div>
+                                <div><strong>User ID:</strong> ${data.id || 'N/A'}</div>
+                                <div><strong>Email:</strong> ${data.email || 'N/A'}</div>
+                                <div><strong>Phone:</strong> ${data.phone || 'N/A'}</div>
+                                <div><strong>Account Status:</strong> <span style="color:#10b981; font-weight:bold;">${data.status || 'Active'}</span></div>
+                            </div>
+                        </div>
+                        <h3>Your Bookings</h3>
+                    `;
+                    
+                    if (data.bookings && data.bookings.length > 0) {
+                        data.bookings.forEach(b => {
+                            let statusText = b.status === "WAITLISTED" ? `Waitlisted ⏳ (Pos: ${b.queuePosition})` : (b.status === "CONFIRMED" ? "Confirmed ✅" : "Cancelled ❌");
+                            profileHtml += `
+                                <div class="ticket-card">
+                                    <div>
+                                        <strong>Flight: ${b.flightNumber} (${b.origin} to ${b.destination})</strong><br>
+                                        <small>Ticket: ${b.ticketNumber}</small><br>
+                                        <small>Passenger: ${b.firstName} ${b.lastName}</small><br>
+                                        <small>Seat: ${b.seatNumber}</small><br>
+                                        <small>Travel Date: ${b.travelDate || 'N/A'}</small>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <strong>Status:</strong><br> ${statusText}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        container.innerHTML = profileHtml;
+                    } else {
+                        container.innerHTML = profileHtml + `<p>No booked tickets found.</p>`;
+                    }
+                }
+            } else {
+                alert("Session expired.");
+                logout();
+            }
+        } catch (e) {
+            console.error(e);
+            document.getElementById("tickets-container").innerHTML = "<p>Failed to load dashboard data.</p>";
+        }
+    }
+ 
+    function logout() {
+        localStorage.clear();
+        const overlay = document.getElementById("logout-overlay");
+        overlay.classList.add("show");
+        setTimeout(() => {
+            window.location.href = "Login.html";
+        }, 3000);
+    }
+ 
+    window.onload = loadDashboard;
+</script>
+</body>
+</html>

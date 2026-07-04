@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroQueue | Secure Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            --primary: #3b82f6;
+            --success: #10b981;
+            --glass: rgba(255, 255, 255, 0.95);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+ 
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+ 
+        body { 
+            margin: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-gradient); 
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+ 
+        .navbar {
+            background: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+ 
+        .navbar .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+ 
+        .container { 
+            width: 100%; 
+            padding: 100px 20px 40px 20px; 
+            display: flex; 
+            justify-content: center; 
+        }
+        
+        .payment-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(10px); 
+            border-radius: 32px; 
+            width: 100%; 
+            max-width: 500px; 
+            padding: 40px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+            border: 1px solid rgba(255, 255, 255, 0.7); 
+        }
+ 
+        .fare-summary {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+ 
+        .fare-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+ 
+        .coupon-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #cbd5e1;
+        }
+        
+        .coupon-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+ 
+        .coupon-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0 !important;
+        }
+ 
+        .btn-coupon {
+            padding: 12px 20px;
+            background: #1e293b;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-coupon:hover { background: #0f172a; }
+ 
+        .coupon-message {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 6px;
+            display: none;
+        }
+ 
+        .fare-row.total {
+            border-top: 1px dashed #cbd5e1;
+            margin-top: 12px;
+            padding-top: 12px;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+ 
+        .total-price { color: var(--success); }
+ 
+        .methods { display: flex; gap: 10px; margin-bottom: 25px; }
+        .method-btn { 
+            flex: 1; padding: 15px 10px; border-radius: 16px; border: 2px solid #e2e8f0;
+            background: white; cursor: pointer; font-weight: 700; font-size: 0.85rem;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .method-btn.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        .method-btn img { width: 24px; height: 24px; object-fit: contain; }
+ 
+        .form-section { display: none; animation: slideIn 0.4s ease; }
+        .form-section.active { display: block; }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+ 
+        label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 15px; font-size: 0.95rem; font-weight: 600; background: white; }
+        
+        .row { display: flex; gap: 15px; }
+ 
+        .qr-container {
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            margin-top: 10px;
+            background: #f8fafc;
+        }
+ 
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: #e2e8f0;
+            margin: 0 auto 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+ 
+        .btn-confirm { 
+            width: 100%; padding: 20px; background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white; border: none; border-radius: 18px; font-weight: 800; 
+            font-size: 1.1rem; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+ 
+        #success-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+ 
+        .checkmark-circle {
+            width: 80px; height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 40px; margin-bottom: 20px;
+            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+ 
+        #error-msg {
+            color: #ef4444;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            display: none;
+        }
+ 
+        @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+ 
+    <nav class="navbar">
+        <div class="logo">AeroQueue</div>
+    </nav>
+ 
+    <div id="success-overlay">
+        <div class="checkmark-circle">✓</div>
+        <h2 style="margin:0; color: #1e293b;">Payment Successful!</h2>
+        <p style="color: #64748b;">Generating your ticket...</p>
+    </div>
+ 
+    <div class="container">
+        <div class="payment-card">
+            <div style="margin-bottom: 15px;">
+                <p style="margin:0; font-size:0.75rem; font-weight:800; color:#64748b;">BOOKING SUMMARY</p>
+                <h2 style="margin:0; color:#1e40af; font-weight:800;" id="finalSeat">--</h2>
+            </div>
+ 
+            <div class="fare-summary">
+                <div class="fare-row"><span>Seat Choice Total</span><span id="seatTotal">₹0</span></div>
+                <div class="fare-row" id="discountRow" style="display: none; color: var(--success);">
+                    <span>Discount Applied</span>
+                    <span id="discountValue">-₹0</span>
+                </div>
+                
+                <div class="coupon-section">
+                    <label>Have a Coupon Code?</label>
+                    <div class="coupon-container">
+                        <input type="text" id="couponInput" class="coupon-input" placeholder="e.g. FLYNEW30">
+                        <button type="button" class="btn-coupon" onclick="applyCouponCode()">Apply</button>
+                    </div>
+                    <div id="couponMsg" class="coupon-message"></div>
+                </div>
+ 
+                <div class="fare-row total">
+                    <span>Total Amount</span>
+                    <span class="total-price" id="finalPrice">₹0</span>
+                </div>
+            </div>
+ 
+            <div class="methods">
+                <div class="method-btn active" id="btn-card" onclick="switchMethod(this, 'card')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/633/633611.png" alt="Card"> Card
+                </div>
+                <div class="method-btn" id="btn-netbanking" onclick="switchMethod(this, 'netbanking')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Bank"> Net Bank
+                </div>
+                <div class="method-btn" id="btn-phonepe" onclick="switchMethod(this, 'phonepe')">
+                    <img src="https://cdn-icons-png.flaticon.com/512/825/825454.png" alt="UPI"> UPI
+                </div>
+            </div>
+ 
+            <div id="error-msg">Please fill in all details to proceed.</div>
+ 
+            <form id="paymentForm">
+                <div id="card-section" class="form-section active">
+                    <label>Cardholder Name</label>
+                    <input type="text" id="cardName" placeholder="e.g. JOHN DOE" class="required">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" class="required">
+                    <div class="row">
+                        <div style="flex:2"><label>Expiry Date</label><input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" class="required"></div>
+                        <div style="flex:1"><label>CVV</label><input type="password" id="cardCvv" placeholder="***" maxlength="3" class="required"></div>
+                    </div>
+                </div>
+ 
+                <div id="netbanking-section" class="form-section">
+                    <label>Bank Name</label>
+                    <select id="bankName" class="required">
+                        <option value="" disabled selected>Select your bank</option>
+                        <option>State Bank of India (SBI)</option>
+                        <option>HDFC Bank</option>
+                        <option>ICICI Bank</option>
+                        <option>Axis Bank</option>
+                    </select>
+                    <label>Account Number</label>
+                    <input type="text" id="accountNumber" placeholder="Enter Account Number" class="required">
+                    <div class="row">
+                        <div style="flex:1"><label>Branch Name</label><input type="text" id="branchName" placeholder="e.g. Hyderabad Main" class="required"></div>
+                        <div style="flex:1"><label>IFSC Code</label><input type="text" id="ifscCode" placeholder="SBIN0001234" maxlength="11" class="required"></div>
+                    </div>
+                </div>
+ 
+                <div id="phonepe-section" class="form-section">
+                    <label>Enter UPI ID</label>
+                    <input type="text" id="upiId" placeholder="username@upi" class="required">
+                    <div class="qr-container">
+                        <div class="qr-placeholder">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=AeroQueuePayment" alt="QR Code" style="width: 100%; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+ 
+                <button type="button" class="btn-confirm" id="payButton" onclick="processPayment()">CONFIRM & PAY NOW →</button>
+            </form>
+        </div>
+    </div>
+ 
+    <script>
+        // ── AUTH GUARD ────────────────────────────────────────────────────
+        if (!localStorage.getItem("token")) {
+            window.location.href = "Login.html";
+        }
+        // ── PAYMENT DONE GUARD — prevents loop back to Payment after success ──
+        if (localStorage.getItem('paymentDone') === 'yes' && localStorage.getItem('ticketNumber')) {
+    localStorage.removeItem('paymentDone');
+    window.location.href = "Ticket.html";
+}
+ 
+        let initialTotalAmount = 0;
+        let isCouponApplied = false;
+        let currentPaymentMethod = 'card';
+ 
+        function switchMethod(btn, method) {
+            currentPaymentMethod = method;
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(method + '-section').classList.add('active');
+            document.getElementById('error-msg').style.display = 'none';
+        }
+ 
+        window.onload = () => {
+            const savedSeat = localStorage.getItem('selectedSeat') || "Not Selected";
+            
+            let calculatedTotalStr = localStorage.getItem("finalPaymentTotal");
+            
+            if(!calculatedTotalStr) {
+                calculatedTotalStr = localStorage.getItem("seatFare") || "₹4,500";
+            }
+            
+            initialTotalAmount = parseInt(calculatedTotalStr.replace(/[^\d]/g, '')) || 4500;
+ 
+            document.getElementById('finalSeat').innerText = savedSeat.startsWith("Seat") ? savedSeat : "Seat " + savedSeat;
+            document.getElementById('seatTotal').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
+            document.getElementById('finalPrice').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
+            
+            updatePayButtonText(initialTotalAmount);
+        };
+ 
+        function applyCouponCode() {
+            const codeInput = document.getElementById('couponInput').value.trim().toUpperCase();
+            const msgBox = document.getElementById('couponMsg');
+            const discountRow = document.getElementById('discountRow');
+            const discountValueText = document.getElementById('discountValue');
+            
+            if (isCouponApplied) {
+                msgBox.style.color = "#ef4444";
+                msgBox.innerText = "A coupon code has already been applied to this order.";
+                msgBox.style.display = "block";
+                return;
+            }
+ 
+            let discountAmount = 0;
+ 
+            if (codeInput === "FLYNEW30") {
+                discountAmount = 300;
+                msgBox.style.color = "var(--success)";
+                msgBox.innerText = "Success! Flat ₹300 discount applied.";
+            } 
+            else if (codeInput === "STUDENT24") {
+                discountAmount = Math.round(initialTotalAmount * 0.10);
+                msgBox.style.color = "var(--success)";
+                msgBox.innerText = `Success! Student 10% discount (-₹${discountAmount.toLocaleString('en-IN')}) applied.`;
+            } 
+            else if (codeInput === "HDFC150") {
+                if (currentPaymentMethod !== 'card') {
+                    msgBox.style.color = "#ef4444";
+                    msgBox.innerText = "This coupon is only valid for HDFC Card transactions. Please select 'Card' payment above.";
+                    msgBox.style.display = "block";
+                    return;
+                }
+                discountAmount = 150;
+                msgBox.style.color = "var(--success)";
+                msgBox.innerText = "Success! HDFC Bank Card offer applied.";
+            } 
+            else if (codeInput === "") {
+                msgBox.style.color = "#ef4444";
+                msgBox.innerText = "Please enter a coupon code before continuing.";
+                msgBox.style.display = "block";
+                return;
+            } 
+            else {
+                msgBox.style.color = "#ef4444";
+                msgBox.innerText = "Invalid coupon code. Please check and try again.";
+                msgBox.style.display = "block";
+                return;
+            }
+ 
+            let updatedFinalTotal = Math.max(0, initialTotalAmount - discountAmount);
+            isCouponApplied = true;
+            
+            discountRow.style.display = "flex";
+            discountValueText.innerText = "-₹" + discountAmount.toLocaleString('en-IN');
+            msgBox.style.display = "block";
+            
+            document.getElementById('finalPrice').innerText = "₹" + updatedFinalTotal.toLocaleString('en-IN');
+            updatePayButtonText(updatedFinalTotal);
+        }
+ 
+        function updatePayButtonText(amt) {
+            document.getElementById('payButton').innerText = "CONFIRM & PAY NOW (₹" + amt.toLocaleString('en-IN') + ") →";
+        }
+ 
+        function processPayment() {
+            const activeSection = document.querySelector('.form-section.active');
+            const inputs = activeSection.querySelectorAll('.required');
+            const errorMsg = document.getElementById('error-msg');
+            let allFilled = true;
+ 
+            inputs.forEach(input => {
+                if (input.value.trim() === "") {
+                    allFilled = false;
+                    input.style.borderColor = "#ef4444";
+                } else {
+                    input.style.borderColor = "#cbd5e1";
+                }
+            });
+ 
+            if (!allFilled) {
+                errorMsg.innerText = 'Please fill in all details to proceed.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+ 
+            errorMsg.style.display = 'none';
+            const btn = document.getElementById('payButton');
+            const overlay = document.getElementById('success-overlay');
+            
+            btn.innerText = "PROCESSING...";
+            btn.disabled = true;
+ 
+            setTimeout(async () => {
+                const flightId = localStorage.getItem('flightId') || '1';
+                const token = localStorage.getItem('token') || '';
+                const seatNumber = localStorage.getItem('selectedSeat') || '';
+                const firstName = localStorage.getItem('passengerFirstName') || '';
+                const lastName = localStorage.getItem('passengerLastName') || '';
+                const passengerEmail = localStorage.getItem('passengerEmail') || '';
+                const origin = localStorage.getItem('fromCity') || '';
+                const destination = localStorage.getItem('toCity') || '';
+                const travelDate = localStorage.getItem('travelDate') || '';
+ 
+                // Build payment fields based on selected method
+                const payload = {
+                    flightId: flightId.toString(),
+                    token: token,
+                    seatNumber: seatNumber,
+                    firstName: firstName,
+                    lastName: lastName,
+                    passengerEmail: passengerEmail,
+                    origin: origin,
+                    destination: destination,
+                    travelDate: travelDate,
+                    paymentMethod: currentPaymentMethod,
+                    fareAmount: document.getElementById('finalPrice').innerText
+                };
+ 
+                if (currentPaymentMethod === 'card') {
+                    payload.cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                    payload.cardExpiry = document.getElementById('cardExpiry').value;
+                    payload.cardCvv = document.getElementById('cardCvv').value;
+                } else if (currentPaymentMethod === 'netbanking') {
+                    payload.bankName = document.getElementById('bankName').value;
+                    payload.accountNumber = document.getElementById('accountNumber').value;
+                    payload.branchName = document.getElementById('branchName').value;
+                    payload.ifscCode = document.getElementById('ifscCode').value;
+                } else if (currentPaymentMethod === 'phonepe') {
+                    payload.upiId = document.getElementById('upiId').value;
+                }
+ 
+                try {
+                    const response = await fetch('http://localhost:8080/api/bookings/enqueue', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem('bookingId', data.bookingId);
+                        localStorage.setItem('ticketNumber', data.ticketNumber);
+                        localStorage.setItem('bookingStatus', data.status);
+                        
+                        overlay.style.display = 'flex';
+                        localStorage.setItem('paymentDone', 'yes');
+                        setTimeout(() => {
+                            window.location.href = "Ticket.html";
+                        }, 1500);
+                    } else {
+                        const errData = await response.json().catch(() => ({}));
+                        errorMsg.innerText = 'Failed to create booking on server: ' + (errData.error || 'Unknown error');
+                        errorMsg.style.display = 'block';
+                        btn.innerText = "CONFIRM & PAY NOW →";
+                        btn.disabled = false;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    errorMsg.innerText = 'Server error. Make sure the AeroQueue backend is running.';
+                    errorMsg.style.display = 'block';
+                    btn.innerText = "CONFIRM & PAY NOW →";
+                    btn.disabled = false;
+                }
+            }, 500);
+        }
+ 
+        document.getElementById('cardNumber').addEventListener("input", (e) => {
+            let v = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let matches = v.match(/\d{4,16}/g);
+            let match = matches && matches[0] || '';
+            let parts = [];
+            for (let i=0, len=match.length; i<len; i+=4) { parts.push(match.substring(i, i+4)); }
+            if (parts.length) { e.target.value = parts.join(' '); }
+        });
+    </script>
+</body>
+</html>

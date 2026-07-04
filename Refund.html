@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Portal | AeroQueue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            /* Matching your search page background exactly */
+            background: linear-gradient(135deg, #dbeafe, #f8fbff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        /* Success Message State */
+        #success-ui {
+            display: none;
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            background: #ecfdf5;
+            color: #10b981;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- Form Section -->
+        <div id="refund-form">
+            <h2>💰 Refund Portal</h2>
+            <p>Please enter your booking details to check your refund eligibility status.</p>
+
+            <div class="input-group">
+                <div class="label">Booking Reference</div>
+                <input type="text" id="refId" placeholder="e.g. AQ-123456" required>
+            </div>
+
+            <div class="input-group">
+                <div class="label">Email Address</div>
+                <input type="email" id="email" placeholder="name@example.com" required>
+            </div>
+
+            <button class="btn-action" onclick="handleSubmit()">Check Eligibility</button>
+            
+            <!-- This version uses JavaScript to go back to your Search Page -->
+            <a class="back-link" onclick="goBack()">← Back to Search</a>
+        </div>
+
+        <!-- Success Message Section -->
+        <div id="success-ui">
+            <div class="icon-circle">✓</div>
+            <h2>Request Received</h2>
+            <p id="msg-text"></p>
+            <button class="btn-action" onclick="location.reload()">Check New Booking</button>
+            <a class="back-link" onclick="goBack()">← Back to Search</a>
+        </div>
+    </div>
+
+    <script>
+        // FUNCTION 1: Logic to handle the button click
+        async function handleSubmit() {
+            const ref = document.getElementById('refId').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (ref === "" || email === "") {
+                alert("Please complete both fields to proceed.");
+                return;
+            }
+
+            const btn = document.querySelector('.btn-action');
+            const originalText = btn.innerText;
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:8080/api/bookings/refund', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticketNumber: ref, email: email })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    // Hide form, show success message
+                    document.getElementById('refund-form').style.display = 'none';
+                    document.getElementById('success-ui').style.display = 'block';
+                    document.getElementById('msg-text').innerText = data.message || ("We have successfully processed your refund for " + ref + ". A confirmation email has been sent to " + email + ".");
+                } else {
+                    alert(data.error || "Failed to process refund. Please try again.");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server error. Make sure the AeroQueue backend is running.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // FUNCTION 2: Logic to return to the search flight page
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+</html>

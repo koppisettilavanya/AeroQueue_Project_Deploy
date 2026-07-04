@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroQueue | Ticket Confirmed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #eff8ff 0%, #dbeafe 25%, #bfdbfe 55%, #93c5fd 100%);
+            --primary: #6366f1;
+            --success: #10b981;
+            --text-main: #1e293b;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+ 
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+ 
+        .ticket-container {
+            background: var(--glass);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+ 
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+ 
+        .success-banner {
+            background: var(--success);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+ 
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 15px;
+        }
+ 
+        .ticket-body {
+            padding: 40px;
+            position: relative;
+        }
+ 
+        .airline-brand {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+ 
+        .flight-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+ 
+        .city-code {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 0;
+        }
+ 
+        .city-name {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+ 
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 30px;
+        }
+ 
+        .label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+ 
+        .value {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+ 
+        .barcode-section {
+            background: #f8fafc;
+            padding: 30px;
+            text-align: center;
+            border-top: 2px dashed #e2e8f0;
+        }
+ 
+        .barcode {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg, #000 5%, transparent 5%, transparent 10%, #000 10%, #000 15%, transparent 15%, #000 30%, #000 35%, transparent 35%, #000 40%, #000 45%, transparent 60%, #000 60%, #000 75%, transparent 75%, #000 90%);
+            background-size: 40px 100%;
+            margin-bottom: 10px;
+        }
+ 
+        .btn-download {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 800;
+            border-radius: 15px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+ 
+        .btn-download:hover {
+            filter: brightness(1.1);
+        }
+ 
+    </style>
+</head>
+<body>
+ 
+    <div class="ticket-container">
+        <div class="success-banner" id="statusBanner">
+            <div class="success-icon">✓</div>
+            <h2 style="margin:0;" id="statusTitle">Booking Confirmed!</h2>
+            <p style="margin:5px 0 0; opacity:0.9;" id="statusDesc">Your journey is ready with AeroQueue</p>
+        </div>
+ 
+        <div class="ticket-body">
+            <div class="airline-brand">
+                <span>AEROQUEUE AIRWAYS</span>
+                <span id="dispFlightNumber">FLIGHT AQ-402</span>
+            </div>
+ 
+            <div class="flight-info">
+                <div>
+                    <p class="city-name">Departure</p>
+                    <h3 class="city-code" id="depCode">---</h3>
+                    <p class="city-name" id="depName">--</p>
+                </div>
+                <div style="align-self: center; color: #cbd5e1; font-size: 24px;">✈</div>
+                <div style="text-align: right;">
+                    <p class="city-name">Arrival</p>
+                    <h3 class="city-code" id="arrCode">---</h3>
+                    <p class="city-name" id="arrName">--</p>
+                </div>
+            </div>
+ 
+            <div class="info-grid">
+                <div>
+                    <p class="label">Passenger</p>
+                    <p class="value" id="dispPassenger">Verified Traveler</p>
+                </div>
+                <div>
+                    <p class="label">Seat Number</p>
+                    <p class="value" id="dispSeat" style="color: var(--primary);">--</p>
+                </div>
+                <div>
+                    <p class="label">Date</p>
+                    <p class="value" id="dispDate">--</p>
+                </div>
+                <div>
+                    <p class="label">Terminal</p>
+                    <p class="value">T2</p>
+                </div>
+            </div>
+        </div>
+ 
+        <div class="barcode-section">
+            <div class="barcode"></div>
+            <p style="font-size: 0.7rem; font-weight: 800; color: #94a3b8;" id="dispTicketNumber">--</p>
+            
+            <a href="#" class="btn-download" onclick="window.print()">DOWNLOAD E-TICKET (PDF)</a>
+            <p style="font-size: 0.7rem; margin-top: 15px; color: #64748b;">A copy of this ticket has been sent to your email.</p>
+        </div>
+    </div>
+ 
+    <script>
+ 
+        const selectedSeat = localStorage.getItem('selectedSeat');
+        const ticketNumber = localStorage.getItem('ticketNumber');
+        const fName = localStorage.getItem('passengerFirstName');
+        const lName = localStorage.getItem('passengerLastName');
+        const fromCity = localStorage.getItem('fromCity') || '';
+        const toCity = localStorage.getItem('toCity') || '';
+        const travelDate = localStorage.getItem('travelDate') || '--';
+ 
+        if (selectedSeat) document.getElementById('dispSeat').innerText = selectedSeat;
+        if (ticketNumber) document.getElementById('dispTicketNumber').innerText = ticketNumber;
+        if (fName && lName) document.getElementById('dispPassenger').innerText = fName + ' ' + lName;
+        document.getElementById('dispDate').innerText = travelDate;
+ 
+        function parseCity(cityStr) {
+            if (!cityStr) return { code: '---', name: '--' };
+            const match = cityStr.match(/(.*?)\s*\(([A-Z]{3})\)/);
+            if (match) return { code: match[2], name: match[1].trim() };
+            return { code: cityStr.substring(0, 3).toUpperCase(), name: cityStr };
+        }
+ 
+        const dep = parseCity(fromCity);
+        const arr = parseCity(toCity);
+        document.getElementById('depCode').innerText = dep.code;
+        document.getElementById('depName').innerText = dep.name;
+        document.getElementById('arrCode').innerText = arr.code;
+        document.getElementById('arrName').innerText = arr.name;
+ 
+        async function updateBookingStatus() {
+            if (!ticketNumber) return;
+            try {
+                const response = await fetch(`http://localhost:8080/api/bookings/status/${ticketNumber}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const banner = document.getElementById('statusBanner');
+                    const title = document.getElementById('statusTitle');
+                    const desc = document.getElementById('statusDesc');
+ 
+                    if (data.status === 'WAITLISTED') {
+                        banner.style.background = '#f59e0b';
+                        title.innerText = 'Booking Waitlisted';
+                        desc.innerText = `Your FIFO Queue Position: ${data.queuePosition}`;
+                    } else if (data.status === 'CONFIRMED') {
+                        banner.style.background = 'var(--success)';
+                        title.innerText = 'Booking Confirmed!';
+                        desc.innerText = 'Your journey is ready with AeroQueue';
+                    } else if (data.status === 'CANCELLED') {
+                        banner.style.background = '#ef4444';
+                        title.innerText = 'Booking Cancelled';
+                        desc.innerText = 'Your booking has been cancelled.';
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch status', err);
+            }
+        }
+ 
+        updateBookingStatus();
+        setInterval(updateBookingStatus, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+﻿[2026-06-11 14:01:05] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:02] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:02] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:02] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:04] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'ticket_cancellation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:06] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'refund_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:39] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:39] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:39] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:41] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'ticket_cancellation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:02:43] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'refund_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail."
+[2026-06-11 14:03:11] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:03:11] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:03:11] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:03:13] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'ticket_cancellation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:03:15] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'refund_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:04:42] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:04:42] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:04:42] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:04:44] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'ticket_cancellation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:04:46] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'refund_confirmation'. Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:17:31] ERROR: Failed to send email to 'tester@aeroqueue.com' of type 'booking_confirmation' (SMTP: 127.0.0.1:1025). Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-11 14:20:17] SUCCESS: Email of type 'booking_confirmation' sent to 'tester@aeroqueue.com' successfully.
+[2026-06-11 14:20:17] SUCCESS: Email of type 'booking_confirmation' sent to 'tester@aeroqueue.com' successfully.
+[2026-06-11 14:20:17] SUCCESS: Email of type 'booking_confirmation' sent to 'tester@aeroqueue.com' successfully.
+[2026-06-11 14:20:19] SUCCESS: Email of type 'waitlist_promotion' sent to 'tester@aeroqueue.com' successfully.
+[2026-06-11 14:20:19] SUCCESS: Email of type 'ticket_cancellation' sent to 'tester@aeroqueue.com' successfully.
+[2026-06-11 14:20:21] SUCCESS: Email of type 'refund_confirmation' sent to 'tester@aeroqueue.com' successfully.
+[2026-06-11 14:22:37] SUCCESS: Email of type 'booking_confirmation' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-11 14:38:50] SUCCESS: Email of type 'booking_confirmation' sent to 'aeroqueue.team@gmail.com' successfully.
+[2026-06-11 14:51:20] SUCCESS: Email of type 'booking_confirmation' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-11 14:53:58] SUCCESS: Email of type 'booking_confirmation' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-11 14:56:47] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-11 15:12:51] SUCCESS: Email of type 'booking_confirmation' sent to 'testpassenger3@aeroqueue.com' successfully.
+[2026-06-11 15:12:51] SUCCESS: Email of type 'booking_confirmation' sent to 'testpassenger2@aeroqueue.com' successfully.
+[2026-06-11 15:12:51] SUCCESS: Email of type 'booking_confirmation' sent to 'testpassenger@aeroqueue.com' successfully.
+[2026-06-11 15:12:54] SUCCESS: Email of type 'ticket_cancellation' sent to 'testpassenger@aeroqueue.com' successfully.
+[2026-06-11 15:12:56] SUCCESS: Email of type 'refund_confirmation' sent to 'testpassenger@aeroqueue.com' successfully.
+[2026-06-11 15:16:15] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-11 15:17:16] SUCCESS: Email of type 'ticket_cancellation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-11 15:20:21] SUCCESS: Email of type 'waitlist_promotion' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-11 15:20:21] SUCCESS: Email of type 'ticket_cancellation' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-11 15:20:48] SUCCESS: Email of type 'refund_confirmation' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-15 20:44:39] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-15 20:45:24] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-15 20:46:48] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 20:52:28] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 20:53:59] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 20:54:21] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 21:24:02] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 21:25:35] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 21:26:37] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-15 21:28:20] SUCCESS: Email of type 'ticket_cancellation' sent to 'kummariakhila40@gmail.com' successfully.
+[2026-06-16 10:27:49] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 10:30:47] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 10:49:59] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 13:25:38] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 13:39:14] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 14:24:56] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 14:39:06] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-16 14:40:17] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-17 20:23:06] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-17 20:24:41] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-17 20:25:37] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-17 20:41:33] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-17 20:43:23] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-18 09:59:26] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-18 10:09:55] ERROR: Failed to send email to 'Kummariakhila40@gmail.com' of type 'booking_confirmation' (SMTP: smtp.gmail.com:587). Error: Exception calling "Send" with "1" argument(s): "Failure sending mail.". Inner: Failure sending mail.
+[2026-06-18 10:11:56] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-18 10:25:18] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-18 10:35:08] SUCCESS: Email of type 'booking_confirmation' sent to 'Kummariakhila40@gmail.com' successfully.
+[2026-06-18 10:37:44] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-23 14:03:09] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-06-23 14:39:20] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.

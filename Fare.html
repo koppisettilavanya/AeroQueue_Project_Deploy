@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroQueue | Premium Multi-Fare Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --business: #1e293b;
+            --first: #b45309;
+            --success: #02a55b;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        * { box-sizing: border-box; transition: all 0.25s ease; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #ffffff 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary); letter-spacing: -0.5px; }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto 140px;
+            padding: 0 20px;
+        }
+
+        .glass-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .section-title { 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            margin-bottom: 20px; 
+            color: #334155; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        .time-slider {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+        .time-slider::-webkit-scrollbar { display: none; }
+
+        .time-node {
+            flex: 0 0 130px;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+        .time-node.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .time-node span { display: block; font-weight: 700; font-size: 1.2rem; }
+
+        .fare-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 15px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .fare-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .fare-card.selected { border-color: var(--primary); background: #fcfcff; transform: scale(1.01); }
+
+        .fare-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .fare-label { font-weight: 800; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+        .price-display { font-size: 1.7rem; font-weight: 800; color: #0f172a; }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .dot { width: 6px; height: 6px; background: #cbd5e1; border-radius: 50%; }
+        .selected .dot { background: var(--primary); }
+
+        .btn-select {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .selected .btn-select { background: var(--primary); color: white; }
+
+        footer {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.08);
+            z-index: 1000;
+        }
+
+        .total-container { text-align: left; }
+        .footer-price { font-size: 1.9rem; font-weight: 800; color: #0f172a; }
+        .promo-status { font-size: 0.8rem; color: var(--success); font-weight: 700; }
+
+        .btn-continue {
+            background: #ff4f17;
+            color: white;
+            border: none;
+            padding: 16px 60px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 79, 23, 0.3);
+        }
+
+        @keyframes jump { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
+        .animate-price { animation: jump 0.3s ease; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">AEROQUEUE</div>
+    <div style="text-align: right;">
+        <div style="font-weight: 700; font-size: 0.9rem;" id="routeText"></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);" id="dateText"></div>
+    </div>
+</header>
+
+<div class="container">
+    
+    <div class="glass-panel">
+        <div class="section-title">Flight Schedule</div>
+        <div class="time-slider">
+            <div class="time-node active" onclick="selectTime(this)"><span>08:00</span>Morning</div>
+            <div class="time-node" onclick="selectTime(this)"><span>11:30</span>Morning</div>
+            <div class="time-node" onclick="selectTime(this)"><span>14:45</span>Afternoon</div>
+            <div class="time-node" onclick="selectTime(this)"><span>18:15</span>Evening</div>
+            <div class="time-node" onclick="selectTime(this)"><span>21:00</span>Night</div>
+        </div>
+    </div>
+
+    <div class="section-title" style="color: #334155;">Select Fare Category</div>
+
+    <div class="fare-card selected" id="f-saver">
+        <div class="fare-info">
+            <div><div class="fare-label">Saver</div><div class="price-display" id="p-saver">₹0</div></div>
+            <button class="btn-select">SELECTED</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-item"><div class="dot"></div> Cancellation fee from ₹3,500</div>
+            <div class="detail-item"><div class="dot"></div> Date change fee from ₹3,000</div>
+            <div class="detail-item"><div class="dot"></div> 7kg Cabin baggage</div>
+            <div class="detail-item"><div class="dot"></div> 15kg Check-in baggage</div>
+        </div>
+    </div>
+
+    <div class="fare-card" id="f-standard">
+        <div class="fare-info">
+            <div><div class="fare-label">Standard</div><div class="price-display" id="p-standard">₹0</div></div>
+            <button class="btn-select">SELECT</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-item"><div class="dot"></div> Lower Date Change Fees</div>
+            <div class="detail-item"><div class="dot"></div> Standard Seat Selection</div>
+            <div class="detail-item"><div class="dot"></div> 7kg Cabin, 20kg Check-in</div>
+            <div class="detail-item"><div class="dot"></div> Priority Check-in Available</div>
+        </div>
+    </div>
+
+    <div class="fare-card" id="f-flexi">
+        <div class="fare-info">
+            <div><div class="fare-label" style="color: var(--secondary);">Flexi Plus</div><div class="price-display" id="p-flexi">₹0</div></div>
+            <button class="btn-select">SELECT</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-item"><div class="dot"></div> Free Cancellation</div>
+            <div class="detail-item"><div class="dot"></div> Free Date Change</div>
+            <div class="detail-item"><div class="dot"></div> Complimentary Meal</div>
+            <div class="detail-item"><div class="dot"></div> Preferred Seat Selection</div>
+        </div>
+    </div>
+
+    <div class="fare-card" id="f-business">
+        <div class="fare-info">
+            <div><div class="fare-label" style="color: var(--business);">Business</div><div class="price-display" id="p-business">₹0</div></div>
+            <button class="btn-select">SELECT</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-item"><div class="dot"></div> Premium Lounge Access</div>
+            <div class="detail-item"><div class="dot"></div> Gourmet Dining Menu</div>
+            <div class="detail-item"><div class="dot"></div> Extra Legroom & Flat-bed</div>
+            <div class="detail-item"><div class="dot"></div> 40kg Check-in Baggage</div>
+        </div>
+    </div>
+
+    <div class="fare-card" id="f-first">
+        <div class="fare-info">
+            <div><div class="fare-label" style="color: var(--first);">First Class</div><div class="price-display" id="p-first">₹0</div></div>
+            <button class="btn-select">SELECT</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-item"><div class="dot"></div> Private Suite Experience</div>
+            <div class="detail-item"><div class="dot"></div> Personal Travel Assistant</div>
+            <div class="detail-item"><div class="dot"></div> Chauffeur Service</div>
+            <div class="detail-item"><div class="dot"></div> Unlimited Connectivity</div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <div class="total-container">
+        <div id="footer-total" class="footer-price">₹0</div>
+        <div id="footer-promo" class="promo-status">SAVER SELECTED</div>
+    </div>
+    <button class="btn-continue" id="continueBtn">CONTINUE</button>
+</footer>
+
+<script>
+const fromCity = localStorage.getItem("fromCity") || "New Delhi";
+const toCity = localStorage.getItem("toCity") || "Mumbai";
+let travelDate = localStorage.getItem("travelDate") || "2026-05-25";
+const airlineName = localStorage.getItem("airlineName") || "AeroConnect";
+const basePrice = Number(localStorage.getItem("ticketPrice")) || 6999;
+
+// OPTIONAL CLEANUP: Converts dynamic "YYYY-MM-DD" structures gracefully into cleaner text presentation
+if(travelDate.includes("-")) {
+    const parsedDate = new Date(travelDate);
+    if(!isNaN(parsedDate)) {
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        travelDate = parsedDate.toLocaleDateString('en-GB', options);
+    }
+}
+
+const calculatedFares = {
+    'f-saver': { price: basePrice, status: 'SAVER SELECTED' },
+    'f-standard': { price: Math.round(basePrice + 750), status: 'STANDARD BENEFITS ACTIVE' },
+    'f-flexi': { price: Math.round(basePrice + 1800), status: 'FLEXI PLUS BENEFITS ACTIVE' },
+    'f-business': { price: Math.round(basePrice * 2.5), status: 'BUSINESS CLASS EXPERIENCE' },
+    'f-first': { price: Math.round(basePrice * 4.2), status: 'ULTIMATE FIRST CLASS LUXURY' }
+};
+
+document.getElementById("routeText").innerText = `${fromCity} → ${toCity}`;
+document.getElementById("dateText").innerText = `${travelDate} | ${airlineName}`;
+
+document.getElementById("p-saver").innerText = "₹" + calculatedFares['f-saver'].price.toLocaleString();
+document.getElementById("p-standard").innerText = "₹" + calculatedFares['f-standard'].price.toLocaleString();
+document.getElementById("p-flexi").innerText = "₹" + calculatedFares['f-flexi'].price.toLocaleString();
+document.getElementById("p-business").innerText = "₹" + calculatedFares['f-business'].price.toLocaleString();
+document.getElementById("p-first").innerText = "₹" + calculatedFares['f-first'].price.toLocaleString();
+
+function activateFareTier(id) {
+    const tierData = calculatedFares[id];
+    const totalEl = document.getElementById('footer-total');
+    
+    totalEl.innerText = "₹" + tierData.price.toLocaleString();
+    document.getElementById('footer-promo').innerText = tierData.status;
+
+    totalEl.classList.remove('animate-price');
+    void totalEl.offsetWidth; 
+    totalEl.classList.add('animate-price');
+
+    document.querySelectorAll('.fare-card').forEach(card => {
+        card.classList.remove('selected');
+        card.querySelector('.btn-select').innerText = 'SELECT';
+    });
+
+    const selectedCard = document.getElementById(id);
+    selectedCard.classList.add('selected');
+    selectedCard.querySelector('.btn-select').innerText = 'SELECTED';
+}
+
+Object.keys(calculatedFares).forEach(id => {
+    document.getElementById(id).addEventListener('click', () => activateFareTier(id));
+});
+
+activateFareTier('f-saver');
+
+function selectTime(el) {
+    document.querySelectorAll('.time-node').forEach(node => {
+        node.classList.remove('active');
+    });
+    el.classList.add('active');
+}
+
+document.getElementById("continueBtn").addEventListener("click", () => {
+    const finalPrice = document.getElementById("footer-total").innerText;
+    
+    localStorage.setItem("seatFare", finalPrice); 
+    
+    if(!localStorage.getItem("selectedSeat")) {
+        localStorage.setItem("selectedSeat", "Assigned on Check-in");
+    }
+    
+    window.location.href = "passenger.html"; 
+});
+</script>
+
+</body>
+</html>

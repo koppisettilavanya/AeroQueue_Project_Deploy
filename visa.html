@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Requirements | AeroQueue Global</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: white;
+            padding: 20px 8%;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-weight: 800; font-size: 1.5rem; color: var(--primary); text-decoration: none; }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-section h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .hero-section p { color: var(--text-muted); font-size: 1.1rem; }
+
+        .search-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline-color: var(--primary);
+        }
+
+        .check-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            height: 48px;
+            margin-top: 23px;
+            transition: 0.3s;
+        }
+
+        .check-btn:hover { background: var(--secondary); }
+
+        /* RESULT STYLE */
+        #search-result {
+            display: none; /* Hidden by default */
+            background: #eef2ff;
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .visa-table {
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-collapse: collapse;
+        }
+
+        .visa-table th {
+            background: #f1f5f9;
+            text-align: left;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .visa-table td {
+            padding: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .bg-green { background: #dcfce7; color: #166534; }
+        .bg-yellow { background: #fef9c3; color: #854d0e; }
+        .bg-blue { background: #dbeafe; color: #1e40af; }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 40px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="search.html" class="logo">AeroQueue</a>
+</nav>
+
+<div class="container">
+    <div class="hero-section">
+        <h1>Visa Guidelines</h1>
+        <p>Get real-time visa requirements for over 190 countries.</p>
+    </div>
+
+    <div class="search-container">
+        <div class="input-group">
+            <label>Your Citizenship</label>
+            <input type="text" id="citizenInput" placeholder="e.g. United Kingdom">
+        </div>
+        <div class="input-group">
+            <label>Destination</label>
+            <input type="text" id="destInput" placeholder="e.g. Japan">
+        </div>
+        <button class="check-btn" onclick="checkVisaStatus()">Check Status</button>
+    </div>
+
+    <!-- This is the result section that was missing logic -->
+    <div id="search-result">
+        <h3 id="res-title"></h3>
+        <p id="res-body"></p>
+    </div>
+
+    <h3>Popular Destination Policies</h3>
+    <table class="visa-table" style="margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>Destination</th>
+                <th>Visa Type</th>
+                <th>Max Stay</th>
+                <th>Entry Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>France</strong></td>
+                <td>Schengen Visa</td>
+                <td>90 Days</td>
+                <td><span class="status-badge bg-blue">Required</span></td>
+            </tr>
+            <tr>
+                <td><strong>Maldives</strong></td>
+                <td>Visa on Arrival</td>
+                <td>30 Days</td>
+                <td><span class="status-badge bg-green">Free Entry</span></td>
+            </tr>
+            <tr>
+                <td><strong>United States</strong></td>
+                <td>ESTA / B1-B2</td>
+                <td>180 Days</td>
+                <td><span class="status-badge bg-yellow">Application Required</span></td>
+            </tr>
+            <tr>
+                <td><strong>Dubai (UAE)</strong></td>
+                <td>E-Visa</td>
+                <td>30 Days</td>
+                <td><span class="status-badge bg-blue">Online Process</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="search.html" class="back-btn">← Return to Flight Search</a>
+</div>
+
+<script>
+    function checkVisaStatus() {
+        const citizen = document.getElementById('citizenInput').value;
+        const dest = document.getElementById('destInput').value;
+        const resultDiv = document.getElementById('search-result');
+        const resTitle = document.getElementById('res-title');
+        const resBody = document.getElementById('res-body');
+
+        // Simple Validation
+        if (!citizen || !dest) {
+            alert("Please fill in both fields.");
+            return;
+        }
+
+        // Professional logic simulation
+        resTitle.innerText = "🔍 Checking Global Database...";
+        resBody.innerText = "Please wait while we verify entry requirements...";
+        resultDiv.style.display = "block";
+
+        setTimeout(() => {
+            resTitle.innerText = "✅ Requirement Found";
+            resBody.innerHTML = `For <strong>${citizen}</strong> citizens traveling to <strong>${dest}</strong>, a Tourist Visa is <strong>Required</strong>. <br>Please prepare your passport (valid for 6 months) and proof of return travel.`;
+        }, 1200);
+    }
+</script>
+
+</body>
+</html>

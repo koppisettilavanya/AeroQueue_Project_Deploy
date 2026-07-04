@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation Success | AeroQueue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #dbeafe, #f8fbff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .success-card {
+            background: rgba(255,255,255,0.96);
+            padding: 50px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .check-icon {
+            font-size: 4rem;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+        h2 { font-size: 2rem; margin-bottom: 10px; color: var(--text-dark); }
+        p { color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; }
+        .ref-number {
+            background: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--primary);
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .home-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+        .home-btn:hover { background: #4338ca; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+<div class="success-card">
+    <div class="check-icon">✓</div>
+    <h2>Cancellation Confirmed</h2>
+    <p>Your booking has been successfully cancelled. A confirmation email with refund details has been sent to your inbox.</p>
+    
+    <div class="ref-number">Refund ID: RFD-8829104</div>
+    
+    <!-- FIXED LINE: Changed index.html to search.html -->
+    <a href="search.html" class="home-btn">Return to Homepage</a>
+</div>
+
+</body>
+</html>

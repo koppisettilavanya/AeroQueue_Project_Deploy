@@ -1,0 +1,11 @@
+# AeroQueue SMTP Configuration
+#
+# For local testing, you can use a mock SMTP tool like MailDev or SMTP4dev on port 1025.
+# For production (e.g. Gmail), update the values below and run your C backend.
+# If using Gmail, make sure to use an App Password rather than your account password.
+
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=aeroqueue.team@gmail.com
+SMTP_PASS=rbxu qglm josx ujeo
+SMTP_FROM=aeroqueue.team@gmail.com

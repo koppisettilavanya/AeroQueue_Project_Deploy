@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancel Booking | AeroQueue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --card-bg: rgba(255,255,255,0.96);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #dbeafe, #f8fbff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+        }
+
+        .cancel-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h2 { margin-bottom: 10px; font-size: 1.8rem; }
+        p { color: var(--text-muted); margin-bottom: 30px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .back-link { 
+            display: inline-block; 
+            margin-top: 25px; 
+            color: var(--primary); 
+            text-decoration: none; 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cancel-card">
+    <div style="font-size: 3rem; margin-bottom: 10px;">✈️</div>
+    <h2>Find Booking</h2>
+    <p>Enter details to start the cancellation process.</p>
+
+    <!-- Form will lead to your next verification step -->
+    <form id="cancelForm">
+        <div class="form-group">
+            <label>Ticket Number</label>
+            <input type="text" id="bookingInput" placeholder="e.g. AQ-TKT-12345" required>
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Enter traveler's last name" required>
+        </div>
+        <div id="statusMessage" style="color: #ef4444; font-size: 0.8rem; margin-bottom: 10px; display: none;"></div>
+        <button type="submit" class="btn-confirm" id="cancelBtn">CANCEL BOOKING</button>
+    </form>
+    
+    <script>
+    document.getElementById('cancelForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const bookingId = document.getElementById('bookingInput').value;
+        const msg = document.getElementById('statusMessage');
+        const btn = document.getElementById('cancelBtn');
+        
+        msg.style.display = 'none';
+        btn.innerText = 'CANCELLING...';
+        btn.disabled = true;
+        
+        try {
+            const resp = await fetch('http://localhost:8080/api/bookings/cancel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticketNumber: bookingId })
+            });
+            
+            if (resp.ok) {
+                msg.style.color = '#10b981';
+                msg.innerText = 'Cancelled Successfully';
+                msg.style.display = 'block';
+                btn.innerText = 'CANCELLED';
+                setTimeout(() => {
+                    window.location.href = "Search.html";
+                }, 4000);
+            } else {
+                msg.style.color = '#ef4444';
+                msg.innerText = 'Failed to cancel booking.';
+                msg.style.display = 'block';
+                btn.innerText = 'CANCEL BOOKING';
+                btn.disabled = false;
+            }
+        } catch(err) {
+            msg.style.color = '#ef4444';
+            msg.innerText = 'Server error.';
+            msg.style.display = 'block';
+            btn.innerText = 'CANCEL BOOKING';
+            btn.disabled = false;
+        }
+    });
+    </script>
+
+    <!-- THIS IS THE LINK YOU NEEDED: It now opens search.html -->
+    <a href="search.html" class="back-link">← Back to Search</a>
+</div>
+
+</body>
+</html>

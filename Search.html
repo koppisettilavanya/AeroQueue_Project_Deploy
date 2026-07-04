@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroQueue | Global Flight Booking</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --card-bg: rgba(255,255,255,0.96);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: 
+                linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), 
+                url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        /* --- NAV LINKS --- */
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            transition: 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-1px);
+        }
+
+        .hero {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .main-container {
+            max-width: 1150px;
+            margin: 40px auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        /* Search Engine Styling */
+        .search-engine {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            color: var(--text-dark);
+        }
+
+        .trip-selector {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .tab {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 8px;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .input-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px;
+            background: white;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .input-box.error {
+            border-color: #ef4444 !important;
+            background: #fff5f5;
+        }
+
+        .error-msg {
+            display: none;
+            font-size: 0.72rem;
+            color: #ef4444;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .input-box.error .error-msg {
+            display: block;
+        }
+
+        .autocorrect-hint {
+            font-size: 0.78rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 3px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .autocorrect-hint:hover { text-decoration: underline; }
+
+        .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .val {
+            border: none;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 600;
+            background: transparent;
+            color: var(--text-dark);
+        }
+
+        .location-list {
+            position: absolute;
+            top: 105%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            border: 1px solid #eee;
+        }
+
+        .location-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 1px solid #f8f8f8;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-dark);
+        }
+
+        .location-item:hover {
+            background-color: #f0efff;
+            color: var(--primary);
+        }
+
+        .location-item span {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .search-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Service Cards Grid */
+        .services-card {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 15px;
+        }
+
+        .service-link { text-decoration: none; color: inherit; display: block; }
+        .service-item {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            border-radius: 18px; 
+            padding: 20px 10px; 
+            text-align: center;
+            transition: 0.3s; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .service-item:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.2); }
+        .service-icon { font-size: 2rem; margin-bottom: 8px; }
+
+        /* OFFERS SECTION */
+        .offers-section {
+            margin-top: 50px;
+            position: relative;
+            display: block;
+        }
+        .offers-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .offers-container::-webkit-scrollbar { display: none; }
+        
+        .offer-card {
+            min-width: 320px;
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: var(--text-dark);
+            transition: 0.3s ease;
+            border: 1px solid #eef2f6;
+            cursor: pointer;
+        }
+        .offer-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        
+        .offer-image-box {
+            height: 150px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .offer-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .offer-tag {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+        .offer-body h4 { font-size: 1rem; font-weight: 700; color: #1e293b; }
+        .offer-body p { font-size: 0.8rem; color: #64748b; line-height: 1.4; }
+        
+        .promo-row {
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .promo-code-btn {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: #f0f7ff;
+            border: 1px dashed var(--primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: var(--primary);
+        }
+
+        /* --- IXIGO-STYLE MOVING WHY WITH AEROQUEUE SECTION --- */
+        .why-section {
+            margin-top: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 40px 0; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden; 
+            position: relative;
+        }
+        
+        .why-section h2 {
+            font-size: 1.8rem; 
+            text-align: center; 
+            margin-bottom: 25px;
+            padding: 0 40px;
+        }
+
+        .why-marquee-wrapper {
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+        }
+
+        .why-track {
+            display: flex;
+            gap: 25px;
+            width: max-content;
+            animation: marqueeScroll 25s linear infinite;
+        }
+
+        .why-track:hover {
+            animation-play-state: paused;
+        }
+
+        .why-item {
+            width: 300px; 
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px 20px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s ease;
+            flex-shrink: 0; 
+        }
+        
+        .why-item:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+        
+        .why-icon {
+            font-size: 2.3rem;
+            margin-bottom: 12px;
+            display: block;
+            text-align: center;
+        }
+        .why-item h3 { font-size: 1.15rem; margin-bottom: 10px; font-weight: 700; text-align: center; }
+        .why-item p { font-size: 0.88rem; color: rgba(255,255,255,0.85); line-height: 1.5; text-align: center; }
+
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Destinations Section */
+        .popular { margin-top: 60px; }
+        .popular h2 { margin-bottom: 30px; font-size: 2rem; color: white; }
+        .destinations { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 25px; 
+        }
+        .destination { 
+            position: relative; 
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            transition: 0.4s; 
+            cursor: pointer; 
+        }
+        .destination img { width: 100%; height: 250px; object-fit: cover; transition: 0.5s; }
+        .destination:hover img { transform: scale(1.1); }
+        .dest-info { padding: 20px; color: white; }
+        .dest-info h3 { font-size: 1.2rem; color: white; }
+        .dest-info p { font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 5px; }
+
+        /* --- FOOTER / PRIVACY POLICY SECTION --- */
+        footer {
+            margin-top: 80px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1150px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+            }
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a, .footer-links span {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .footer-links a:hover, .footer-links span:hover {
+            color: white;
+        }
+
+        .copyright {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* IXIGO STYLE OFFER DETAIL OVERLAY */
+        .offer-detail-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000;
+            justify-content: center; align-items: flex-end;
+        }
+        .offer-detail-content {
+            background: white; width: 100%; max-width: 500px;
+            border-top-left-radius: 30px; border-top-right-radius: 30px;
+            padding: 30px; color: var(--text-dark);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .detail-code-box {
+            background: #f8fafc; border: 2px dashed #cbd5e1; padding: 15px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center; margin: 20px 0;
+        }
+        .copy-trigger {
+            color: var(--primary); font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+
+        /* Modals & Drawer */
+        .modal-overlay, .drawer-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+        .drawer-overlay { justify-content: flex-end; }
+        .modal-card { background: white; padding: 30px; border-radius: 24px; width: 400px; color: var(--text-dark); }
+        
+        .modal-row {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin: 18px 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-row:last-of-type { border-bottom: none; }
+        
+        .counter-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-dark);
+            transition: 0.2s;
+        }
+        .counter-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+        
+        .drawer {
+            width: 380px; height: 100%; background: white; padding: 30px;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.2); color: var(--text-dark);
+            overflow-y: auto;
+        }
+        .scroll-offer-item { padding: 15px; border: 1px solid #f1f5f9; border-radius: 12px; margin-bottom: 15px; cursor: pointer; }
+
+        /* --- TERMS & CONDITIONS MODAL SPECIFIC STYLE --- */
+        .terms-body {
+            max-height: 280px;
+            overflow-y: auto;
+            margin: 15px 0;
+            font-size: 0.88rem;
+            color: #475569;
+            line-height: 1.5;
+            text-align: left;
+            padding-right: 5px;
+        }
+        .terms-body h4 {
+            margin: 12px 0 4px 0;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+
+
+<nav>
+    <div class="logo">AeroQueue</div>
+    <div class="nav-links">
+        <a href="dashboard.html" style="background: rgba(255,255,255,0.2);">📊 Dashboards</a>
+        <a href="mailto:support@aeroqueue.com">📧 Contact</a>
+        <a href="helpdesk.html">🛠️ Support</a>
+    </div>
+</nav>
+
+<div class="hero">
+    <h1>Explore the World ✈️</h1>
+    <p>Find the best deals to every corner of the globe</p>
+</div>
+
+<div class="main-container">
+
+    <div class="search-engine">
+        <div class="trip-selector">
+            <div class="tab active" id="tab-oneway" onclick="switchTrip('oneway')">One Way</div>
+            <div class="tab" id="tab-round" onclick="switchTrip('round')">Round Trip</div>
+        </div>
+
+        <form onsubmit="return saveFlightData()" action="flight.html">
+            <div class="search-grid">
+                <div class="input-box" id="fromBox">
+                    <div class="label">From</div>
+                    <input type="text" class="val" id="fromCity" placeholder="Origin" autocomplete="off" onfocus="showList('fromList')" onkeyup="handleInput('fromCity', 'fromList', 'fromBox')">
+                    <div class="error-msg" id="fromError">Please enter a valid origin</div>
+                    <div class="autocorrect-hint" id="fromHint"></div>
+                    <div class="location-list" id="fromList"></div>
+                </div>
+
+                <div class="input-box" id="toBox">
+                    <div class="label">To</div>
+                    <input type="text" class="val" id="toCity" placeholder="Destination" autocomplete="off" onfocus="showList('toList')" onkeyup="handleInput('toCity', 'toList', 'toBox')">
+                    <div class="error-msg" id="toError">Please enter a valid destination</div>
+                    <div class="autocorrect-hint" id="toHint"></div>
+                    <div class="location-list" id="toList"></div>
+                </div>
+
+                <div class="input-box">
+                    <div class="label">Departure</div>
+                    <input type="date" class="val" id="departureDate">
+                </div>
+
+                <div class="input-box" id="return-box">
+                    <div class="label">Return</div>
+                    <input type="date" class="val" id="return-input" disabled>
+                </div>
+
+                <div class="input-box" onclick="toggleModal()" style="cursor:pointer">
+                    <div class="label">Passengers</div>
+                    <div class="val" id="traveller-label">1 Adult, 0 Children</div>
+                </div>
+            </div>
+            <button class="search-btn">FIND GLOBAL FLIGHTS</button>
+        </form>
+    </div>
+
+    <div class="services-card">
+        <a href="tracker.html" class="service-link"><div class="service-item"><div class="service-icon">📡</div>Flight Tracker</div></a>
+        <a href="refund.html" class="service-link"><div class="service-item"><div class="service-icon">💰</div>Refunds</div></a>
+        <a href="cancellation.html" class="service-link"><div class="service-item"><div class="service-icon">❌</div>Cancel</div></a>
+        <a href="visa.html" class="service-link"><div class="service-item"><div class="service-icon">🛂</div>Visa Info</div></a>
+    </div>
+
+    <div class="offers-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="font-size: 1.6rem; color: white; margin: 0;">Special Offers & Discounts 🎁</h2>
+            <span onclick="toggleDrawer()" style="color: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 600; background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 30px;">View All</span>
+        </div>
+        
+        <div class="offers-container">
+            <div class="offer-card" onclick="openOfferDetail('FLYNEW30', 'First Booking Discount', 'Get a flat $30 off on your first flight booking. Valid for new customers on international routes.', 'This offer ends on December 31, 2026.')">
+                <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1570126618953-d437176e8c79?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="offer-body">
+                    <span class="offer-tag">New User</span>
+                    <h4>Flat $30 OFF First Booking</h4>
+                    <p>Register today and save big on your first international flight.</p>
+                    <div class="promo-row">
+                        <span style="font-size: 0.7rem; color: #94a3b8;">Limited Offer</span>
+                        <div class="promo-code-btn">FLYNEW30</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offer-card" onclick="openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer ends on July 15, 2026.')">
+                <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="offer-body">
+                    <span class="offer-tag">Student Deal</span>
+                    <h4>Extra 10% Off for Students</h4>
+                    <p>Verify your ID and get student-exclusive fares and extra baggage.</p>
+                    <div class="promo-row">
+                        <span style="font-size: 0.7rem; color: #94a3b8;">Valid ID Req.</span>
+                        <div class="promo-code-btn">STUDENT24</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offer-card" onclick="openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on June 30, 2026.')">
+                <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=800&auto=format&fit=crop');"></div>
+                <div class="offer-body">
+                    <span class="offer-tag">Bank Offer</span>
+                    <h4>HDFC Bank Cashback</h4>
+                    <p>Use HDFC Credit Cards for 15% instant cashback up to $150.</p>
+                    <div class="promo-row">
+                        <span style="font-size: 0.7rem; color: #94a3b8;">T&C Apply</span>
+                        <div class="promo-code-btn">HDFCSAVE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="why-section">
+        <h2>Why book with AeroQueue?</h2>
+        <div class="why-marquee-wrapper">
+            <div class="why-track">
+                
+                <div class="why-item">
+                    <span class="why-icon">✈️</span>
+                    <h3>Fast & Seamless</h3>
+                    <p>Experience the quickest booking flow with zero hidden charges and instant ticket generation.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">🔒</span>
+                    <h3>Safe & Secure</h3>
+                    <p>Your payments are protected by global security standards and 256-bit encryption protocols.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">💁</span>
+                    <h3>24/7 Support</h3>
+                    <p>Our dedicated travel experts are available round the clock to assist you with any queries.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">💳</span>
+                    <h3>Instant & Full Refund</h3>
+                    <p>Get full cash reversals with zero breakdown cancellation structural layouts applied automatically.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">📈</span>
+                    <h3>Track Flight Deals</h3>
+                    <p>Monitor real-time pricing alerts, drop charts, and book structural dynamic low fares effortlessly.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">🎫</span>
+                    <h3>Boarding Gate</h3>
+                    <p>Receive immediate notifications regarding gate changes, delays, or structural airport layout transfers.</p>
+                </div>
+
+                <div class="why-item">
+                    <span class="why-icon">✈️</span>
+                    <h3>Fast & Seamless</h3>
+                    <p>Experience the quickest booking flow with zero hidden charges and instant ticket generation.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">🔒</span>
+                    <h3>Safe & Secure</h3>
+                    <p>Your payments are protected by global security standards and 256-bit encryption protocols.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">💁</span>
+                    <h3>24/7 Support</h3>
+                    <p>Our dedicated travel experts are available round the clock to assist you with any queries.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">💳</span>
+                    <h3>Instant & Full Refund</h3>
+                    <p>Get full cash reversals with zero breakdown cancellation structural layouts applied automatically.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">📈</span>
+                    <h3>Track Flight Deals</h3>
+                    <p>Monitor real-time pricing alerts, drop charts, and book structural dynamic low fares effortlessly.</p>
+                </div>
+                <div class="why-item">
+                    <span class="why-icon">🎫</span>
+                    <h3>Boarding Gate</h3>
+                    <p>Receive immediate notifications regarding gate changes, delays, or structural airport layout transfers.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="popular">
+        <h2>World Wide Destinations</h2>
+        <div class="destinations">
+            <div class="destination"><img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1000"><div class="dest-info"><h3>Paris, France</h3><p>City of Light</p></div></div>
+            <div class="destination"><img src="https://cdn.pixabay.com/photo/2019/04/20/11/39/japan-4141578_1280.jpg"><div class="dest-info"><h3>Tokyo, Japan</h3><p>Futuristic Tradition</p></div></div>
+            <div class="destination"><img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1000"><div class="dest-info"><h3>Bali, Indonesia</h3><p>Tropical Bliss</p></div></div>
+            <div class="destination"><img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1000"><div class="dest-info"><h3>New York, USA</h3><p>The Big Apple</p></div></div>
+            <div class="destination"><img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1000"><div class="dest-info"><h3>Rome, Italy</h3><p>Eternal City</p></div></div>
+            <div class="destination"><img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=1000"><div class="dest-info"><h3>Sydney, Australia</h3><p>Iconic Harbor</p></div></div>
+            <div class="destination"><img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1000"><div class="dest-info"><h3>Dubai, UAE</h3><p>Desert Luxury</p></div></div>
+            <div class="destination"><img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1000"><div class="dest-info"><h3>London, UK</h3><p>Royal Heritage</p></div></div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-links">
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <span onclick="toggleTermsModal()">Terms & Conditions</span>
+            <a href="#cookies">Cookie Preferences</a>
+        </div>
+        <div class="copyright">
+            &copy; 2026 AeroQueue. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<div class="modal-overlay" id="termsModal">
+    <div class="modal-card" style="width: 500px; max-width: 90%;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="font-size: 1.3rem;">Terms & Conditions</h3>
+            <span onclick="toggleTermsModal()" style="cursor:pointer; font-size:1.8rem; color:#94a3b8;">&times;</span>
+        </div>
+        <div class="terms-body">
+            <p>Welcome to AeroQueue. By accessing or using our booking system engine platform, you agree to comply with and be bound by the following structural rules and operational policies.</p>
+            
+            <h4>1. Booking & Payments</h4>
+            <p>All flight reservations are subject to live ticket availability updates and dynamic airline fare rules. Ticket verification requests are finalized exclusively upon full clearance of financial payment configurations.</p>
+            
+            <h4>2. Cancellation & Full Refunds</h4>
+            <p>Standardized tickets obey specified carrier laws. However, items integrated under the dynamic direct-protect structures guarantee complete asset breakdowns and zero system-wide dynamic structural deductions.</p>
+            
+            <h4>3. Liability Disclaimers</h4>
+            <p>AeroQueue functions strictly as a centralized flight logistics gateway. We cannot be held liable for sudden schedule re-alignments, delays, airport structure re-routing updates, or baggage issues governed by third-party terminal systems.</p>
+        </div>
+        <button class="search-btn" onclick="toggleTermsModal()" style="margin-top: 10px;">I Understand</button>
+    </div>
+</div>
+
+<div class="offer-detail-overlay" id="offerOverlay" onclick="closeOfferDetail()">
+    <div class="offer-detail-content" onclick="event.stopPropagation()">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h2 id="detailTitle" style="font-size: 1.4rem; margin-bottom: 5px;">Offer Title</h2>
+                <p id="detailDesc" style="color: #64748b; font-size: 0.9rem; margin-bottom: 8px;">Terms and conditions...</p>
+                <p id="detailExpiry" style="color: #e11d48; font-size: 0.85rem; font-weight: 700;"></p>
+            </div>
+            <span onclick="closeOfferDetail()" style="cursor:pointer; font-size: 1.8rem; color: #94a3b8;">&times;</span>
+        </div>
+        <div class="detail-code-box">
+            <div>
+                <span style="font-size: 0.75rem; color: #94a3b8; display: block;">PROMO CODE</span>
+                <span id="detailCode" style="font-weight: 800; font-size: 1.2rem; color: var(--primary);">FLY30</span>
+            </div>
+            <span id="copyBtnText" class="copy-trigger" onclick="copyCode()">COPY</span>
+        </div>
+        <button class="search-btn" onclick="closeOfferDetail()">BOOK NOW</button>
+    </div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3>All Offers</h3><span onclick="toggleDrawer()" style="cursor:pointer; font-size:1.8rem;">&times;</span>
+        </div>
+        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('FLYNEW30', 'First Booking Discount', 'Get a flat $30 off on your first flight booking. Valid for new customers on international routes.', 'This offer ends on December 31, 2026.')"><h5 style="color:var(--primary);">FLYNEW30</h5><p>Save $30 on first flight.</p></div>
+        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer ends on July 15, 2026.')"><h5 style="color:var(--primary);">STUDENT24</h5><p>10% Student discount.</p></div>
+        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on June 30, 2026.')"><h5 style="color:var(--primary);">HDFCSAVE</h5><p>15% HDFC Cashback.</p></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+    <div class="modal-card">
+        <h3 style="margin-bottom: 10px;">Select Travelers</h3>
+        
+        <div class="modal-row">
+            <div>
+                <span style="font-weight:600; display:block;">Adults</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">Age 12+</span>
+            </div>
+            <div>
+                <button type="button" class="counter-btn" onclick="updateCount('adult', -1)">-</button>
+                <span id="adult-count" style="margin: 0 14px; font-weight:700; font-size:1.1rem;">1</span>
+                <button type="button" class="counter-btn" onclick="updateCount('adult', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="modal-row">
+            <div>
+                <span style="font-weight:600; display:block;">Children</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">Age 2-12</span>
+            </div>
+            <div>
+                <button type="button" class="counter-btn" onclick="updateCount('child', -1)">-</button>
+                <span id="child-count" style="margin: 0 14px; font-weight:700; font-size:1.1rem;">0</span>
+                <button type="button" class="counter-btn" onclick="updateCount('child', 1)">+</button>
+            </div>
+        </div>
+
+        <button class="search-btn" onclick="confirmPassengers()" style="margin-top: 15px;">Confirm Selection</button>
+    </div>
+</div>
+
+<script>
+// ... (Keep all existing variables and functions: locations, levenshtein, getBestMatch, etc.) ...
+
+// --- ADD THIS TO YOUR SCRIPT ---
+// Sets the minimum date for the departure input to today
+function setMinDate() {
+    const today = new Date().toISOString().split('T')[0];
+    const deptInput = document.getElementById('departureDate');
+    deptInput.setAttribute('min', today);
+}
+
+// Update the window.onload to include this function
+window.onload = () => {
+    setupLocationLists();
+    setMinDate();
+};
+
+// ... (Keep the rest of your existing functions: populateList, handleInput, openOfferDetail, etc.) ...
+
+const locations = [
+    { city: "New York", code: "JFK", country: "USA" }, { city: "London", code: "LHR", country: "UK" },
+    { city: "Paris", code: "CDG", country: "France" }, { city: "Tokyo", code: "HND", country: "Japan" },
+    { city: "Dubai", code: "DXB", country: "UAE" }, { city: "Mumbai", code: "BOM", country: "India" },
+    { city: "New Delhi", code: "DEL", country: "India" }, { city: "Sydney", code: "SYD", country: "Australia" },
+    { city: "Singapore", code: "SIN", country: "Singapore" }, { city: "Bali", code: "DPS", country: "Indonesia" },
+    { city: "Rome", code: "FCO", country: "Italy" }, { city: "Bangkok", code: "BKK", country: "Thailand" }
+];
+
+// Levenshtein distance for fuzzy matching
+function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++)
+        for (let j = 1; j <= n; j++)
+            dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n];
+}
+
+function getBestMatch(query) {
+    if (!query || query.length < 2) return null;
+    const q = query.toLowerCase();
+    let best = null, bestScore = Infinity;
+    locations.forEach(loc => {
+        const targets = [loc.city.toLowerCase(), loc.code.toLowerCase(), loc.country.toLowerCase()];
+        targets.forEach(t => {
+            if (t.includes(q)) { bestScore = -1; best = loc; }
+            else {
+                const dist = levenshtein(q, t.substring(0, Math.max(t.length, q.length)));
+                if (dist < bestScore) { bestScore = dist; best = loc; }
+            }
+        });
+    });
+    return bestScore <= 3 ? best : null;
+}
+
+function populateList(listId, filter) {
+    const listEl = document.getElementById(listId);
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    const inputId = listId.replace('List', 'City');
+    const filtered = filter
+        ? locations.filter(loc =>
+            loc.city.toLowerCase().includes(filter) ||
+            loc.code.toLowerCase().includes(filter) ||
+            loc.country.toLowerCase().includes(filter))
+        : locations;
+
+    filtered.forEach(loc => {
+        const div = document.createElement('div');
+        div.className = 'location-item';
+        div.innerHTML = `${loc.city} (${loc.code}) <span>${loc.country}</span>`;
+        div.onclick = () => {
+            document.getElementById(inputId).value = `${loc.city} (${loc.code})`;
+            listEl.style.display = 'none';
+            const boxId = listId.replace('List', 'Box');
+            clearError(boxId);
+            validateSameRoute();
+        };
+        listEl.appendChild(div);
+    });
+    listEl.style.display = filtered.length > 0 ? 'block' : 'none';
+}
+
+function setupLocationLists() {
+    populateList('fromList', '');
+    populateList('toList', '');
+    document.getElementById('fromList').style.display = 'none';
+    document.getElementById('toList').style.display = 'none';
+}
+
+function handleInput(inputId, listId, boxId) {
+    const val = document.getElementById(inputId).value.trim().toLowerCase();
+    const hintId = inputId.replace('City', 'Hint');
+    const hintEl = document.getElementById(hintId);
+    clearError(boxId);
+    hintEl.style.display = 'none';
+    if (val === '') { document.getElementById(listId).style.display = 'none'; return; }
+    populateList(listId, val);
+    const hasExact = locations.some(loc => loc.city.toLowerCase().includes(val) || loc.code.toLowerCase().includes(val));
+    if (!hasExact && val.length >= 2) {
+        const match = getBestMatch(val);
+        if (match) {
+            hintEl.textContent = `Did you mean: ${match.city} (${match.code})?`;
+            hintEl.style.display = 'block';
+            hintEl.onclick = () => {
+                document.getElementById(inputId).value = `${match.city} (${match.code})`;
+                hintEl.style.display = 'none';
+                document.getElementById(listId).style.display = 'none';
+                clearError(boxId);
+                validateSameRoute();
+            };
+        }
+    }
+}
+
+function openOfferDetail(code, title, desc, expiry) {
+    document.getElementById('detailCode').innerText = code;
+    document.getElementById('detailTitle').innerText = title;
+    document.getElementById('detailDesc').innerText = desc;
+    document.getElementById('detailExpiry').innerText = expiry || '';
+    document.getElementById('copyBtnText').innerText = "COPY";
+    document.getElementById('offerOverlay').style.display = 'flex';
+}
+
+function closeOfferDetail() { document.getElementById('offerOverlay').style.display = 'none'; }
+
+function copyCode() {
+    const codeText = document.getElementById('detailCode').innerText;
+    navigator.clipboard.writeText(codeText).then(() => {
+        const copyBtn = document.getElementById('copyBtnText');
+        copyBtn.innerText = "COPIED!";
+        setTimeout(() => { copyBtn.innerText = "COPY"; }, 2000);
+    }).catch(err => { console.error('Could not copy code text: ', err); });
+}
+
+function showList(id) {
+    document.getElementById('fromList').style.display = 'none';
+    document.getElementById('toList').style.display = 'none';
+    populateList(id, '');
+}
+
+function clearError(boxId) {
+    const box = document.getElementById(boxId);
+    if (box) box.classList.remove('error');
+}
+
+function validateSameRoute() {
+    const from = document.getElementById('fromCity').value.trim().toLowerCase();
+    const to = document.getElementById('toCity').value.trim().toLowerCase();
+    if (from && to && from === to) {
+        document.getElementById('toBox').classList.add('error');
+        document.getElementById('toError').textContent = 'Origin and destination cannot be the same!';
+        return false;
+    }
+    clearError('toBox');
+    return true;
+}
+
+function toggleDrawer() {
+    const d = document.getElementById('drawerOverlay');
+    d.style.display = d.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function toggleModal() {
+    const m = document.getElementById('modal');
+    m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function toggleTermsModal() {
+    const tModal = document.getElementById('termsModal');
+    tModal.style.display = tModal.style.display === 'flex' ? 'none' : 'flex';
+}
+
+let passengerData = { adult: 1, child: 0 };
+
+function updateCount(type, val) {
+    if (type === 'adult') {
+        passengerData.adult = Math.max(1, passengerData.adult + val);
+        document.getElementById('adult-count').innerText = passengerData.adult;
+    } else if (type === 'child') {
+        passengerData.child = Math.max(0, passengerData.child + val);
+        document.getElementById('child-count').innerText = passengerData.child;
+    }
+}
+
+function confirmPassengers() {
+    const label = `${passengerData.adult} Adult${passengerData.adult > 1 ? 's' : ''}, ${passengerData.child} Child${passengerData.child !== 1 ? 'ren' : ''}`;
+    document.getElementById('traveller-label').innerText = label;
+    toggleModal();
+}
+
+function switchTrip(type) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + type).classList.add('active');
+    const returnInput = document.getElementById('return-input');
+    const returnBox = document.getElementById('return-box');
+    if (type === 'round') {
+        if(returnInput) {
+            returnInput.disabled = false;
+            // Also ensure return date cannot be before departure date
+            returnInput.setAttribute('min', document.getElementById('departureDate').value);
+        }
+        if(returnBox) returnBox.style.opacity = '1';
+    } else {
+        if(returnInput) { returnInput.disabled = true; returnInput.value = ''; }
+        if(returnBox) returnBox.style.opacity = '0.5';
+    }
+}
+
+function saveFlightData() {
+    const from = document.getElementById("fromCity").value.trim();
+    const to = document.getElementById("toCity").value.trim();
+    const deptDate = document.getElementById("departureDate").value;
+    let valid = true;
+    const fromValid = locations.some(loc => `${loc.city} (${loc.code})` === from);
+    if (!from || !fromValid) { document.getElementById('fromBox').classList.add('error'); valid = false; }
+    else { clearError('fromBox'); }
+    const toValid = locations.some(loc => `${loc.city} (${loc.code})` === to);
+    if (!to || !toValid) { document.getElementById('toBox').classList.add('error'); valid = false; }
+    else { clearError('toBox'); }
+    if (from && to && from === to) { document.getElementById('toBox').classList.add('error'); valid = false; }
+    if (!deptDate) { alert("Please select a departure date."); valid = false; }
+    if (!valid) return false;
+    localStorage.setItem("searchFrom", from);
+    localStorage.setItem("searchTo", to);
+    localStorage.setItem("departureDate", deptDate);
+    localStorage.setItem("adults", passengerData.adult);
+    localStorage.setItem("children", passengerData.child);
+    return true;
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.input-box')) {
+        const fromList = document.getElementById('fromList');
+        const toList = document.getElementById('toList');
+        if(fromList) fromList.style.display = 'none';
+        if(toList) toList.style.display = 'none';
+    }
+});
+</script>
+
+</body>
+</html>

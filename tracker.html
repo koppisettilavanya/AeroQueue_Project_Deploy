@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroQueue | Live Flight Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            /* Matches the background of your search.html */
+            background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), 
+                        url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+        }
+
+        .tracker-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { opacity: 0.7; }
+
+        h1 { font-size: 1.8rem; margin-bottom: 10px; color: var(--text-dark); }
+        p { color: var(--text-muted); margin-bottom: 30px; font-size: 0.95rem; }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+        .track-btn {
+            padding: 15px 25px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .track-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+
+        /* Results Section */
+        #results {
+            display: none;
+            text-align: left;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .flight-code { font-size: 1.4rem; font-weight: 800; }
+        .badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-val { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="tracker-card">
+    <!-- This links back to your main file search.html -->
+    <a href="search.html" class="back-btn">← BACK TO BOOKING</a>
+    
+    <h1>Flight Tracker 📡</h1>
+    <p>Get real-time updates on any global flight status.</p>
+
+    <div class="search-group">
+        <input type="text" id="flightInput" placeholder="Enter Flight No. (e.g. AA101)">
+        <button class="track-btn" onclick="simulateTracking()">TRACK</button>
+    </div>
+
+    <div id="results">
+        <div class="status-header">
+            <div class="flight-code" id="display-code">--</div>
+            <div class="badge">LIVE: ON TIME</div>
+        </div>
+
+        <div class="info-grid">
+            <div>
+                <div class="info-label">From</div>
+                <div class="info-val" id="display-from">Origin Airport</div>
+            </div>
+            <div>
+                <div class="info-label">To</div>
+                <div class="info-val" id="display-to">Destination Airport</div>
+            </div>
+            <div>
+                <div class="info-label">Departure</div>
+                <div class="info-val">10:30 AM (Scheduled)</div>
+            </div>
+            <div>
+                <div class="info-label">Gate</div>
+                <div class="info-val">B-12</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function simulateTracking() {
+        const input = document.getElementById('flightInput').value.trim();
+        const res = document.getElementById('results');
+        const btn = document.querySelector('.track-btn');
+        
+        if (input === "") {
+            alert("Please enter a flight number.");
+            return;
+        }
+
+        btn.innerText = "SEARCHING...";
+        btn.style.opacity = "0.5";
+        res.style.display = 'none'; // Hide old results while searching
+
+        try {
+            const resp = await fetch('http://localhost:8080/api/flights');
+            if (resp.ok) {
+                const data = await resp.json();
+                const flights = data.flights || [];
+                const flight = flights.find(f => f.flightNumber.toLowerCase() === input.toLowerCase());
+                
+                if (flight) {
+                    btn.innerText = "TRACK";
+                    btn.style.opacity = "1";
+                    res.style.display = 'block';
+
+                    document.getElementById('display-code').innerText = "FLIGHT " + flight.flightNumber;
+                    document.getElementById('display-from').innerText = flight.origin;
+                    document.getElementById('display-to').innerText = flight.destination;
+                    
+                    const badge = document.querySelector('.badge');
+                    badge.innerText = "LIVE: ON TIME";
+                    badge.style.background = "#dcfce7";
+                    badge.style.color = "#166534";
+                    
+                    document.querySelector('.info-grid div:nth-child(4) .info-val').innerText = "B-12";
+                } else {
+                    alert("Flight not found in AeroQueue system.");
+                    btn.innerText = "TRACK";
+                    btn.style.opacity = "1";
+                }
+            } else {
+                alert("Server error.");
+                btn.innerText = "TRACK";
+                btn.style.opacity = "1";
+            }
+        } catch(err) {
+            alert("Failed to reach server.");
+            btn.innerText = "TRACK";
+            btn.style.opacity = "1";
+        }
+    }
+</script>
+
+</body>
+</html>

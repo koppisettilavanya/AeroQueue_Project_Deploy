@@ -1,0 +1,10 @@
+1|Kummari|Akhila|kummariakhila40@gmail.com|+91 7989987854|15e2b0d3c33891ebb0f1ef609ec419420c20e320ce94c65fbc8c3312448eb225|token_1|Active
+2|Kummari|Akhila|Kummariakhila40@gmail.com|Google User|google_oauth|token_2|Active
+3|API|Test|api_user_1780724219@example.com|+91 9999988888|4dc51428db8f30402994d5f96557733377e54ff0a90c794536eae549dac50161|token_3|Active
+4|koppisetti|lavanya|koppisettilavanya111@gmail.com|+91 9391513218|376a2b90eefd9a127e6d5136740a39af8b0785e13fc5b165893870a0b20f8c7b|token_4|Active
+5|API|Test|api_test_1780726577@example.com|+91 9999988888|05e257beacef9b6de48efb650eb05ccca67334ce1bec66db645f40c867752765|token_5|Active
+6|API|Test|api_test_1780726598@example.com|+91 9999988888|05e257beacef9b6de48efb650eb05ccca67334ce1bec66db645f40c867752765|token_6|Active
+7|Kummari|Manasvi|kummarimanasvi40@gmail.com|+91 7989987854|4f61b8644a15ea6fa241895b7741e28ac280595bf498fc24f9e46df1d111ce40|token_7|Active
+8|John|Doe|tester@aeroqueue.com|+1234567890|008c70392e3abfbd0fa47bbc2ed96aa99bd49e159727fcba0f2e6abeb3a9d601|token_8|Active
+9|demo|user|demo@gmail.com|+91 7989987854|7063b467783b2f3b96cfc3a80ffc6da1d551a64fa139530a7af1a4bcc425d909|token_9|Active
+10|user|demo|userdemo@gmail.com|+91 7989987854|ff96673205dc722320598ebf8f88325b2ac56922d5a2164b5765868274bc0d73|token_10|Active
