@@ -609,7 +609,7 @@ async function updateResults() {
  
     let baseResults = [];
     try {
-        const resp = await fetch('http://localhost:8080/api/flights');
+        const resp = await fetch('https://aeroqueue-backend.onrender.com/api/flights');
         const data = await resp.json();
         const apiFlights = data.flights || [];
         
