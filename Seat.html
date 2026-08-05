@@ -408,7 +408,7 @@
             
             let occupiedSeats = [];
             try {
-                const response = await fetch('http://localhost:8080/api/bookings/occupied', {
+                const response = await fetch('https://aeroqueue-backend.onrender.com/api/bookings/occupied', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
