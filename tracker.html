@@ -183,7 +183,7 @@
         res.style.display = 'none'; // Hide old results while searching
 
         try {
-            const resp = await fetch('http://localhost:8080/api/flights');
+            const resp = await fetch('https://aeroqueue-backend.onrender.com/api/flights');
             if (resp.ok) {
                 const data = await resp.json();
                 const flights = data.flights || [];
