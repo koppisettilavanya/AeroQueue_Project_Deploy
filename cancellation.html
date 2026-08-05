@@ -118,7 +118,7 @@
         btn.disabled = true;
         
         try {
-            const resp = await fetch('http://localhost:8080/api/bookings/cancel', {
+            const resp = await fetch('https://aeroqueue-backend.onrender.com/api/bookings/cancel', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ticketNumber: bookingId })
