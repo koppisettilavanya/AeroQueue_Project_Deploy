@@ -72,3 +72,8 @@
 [2026-06-18 10:37:44] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
 [2026-06-23 14:03:09] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
 [2026-06-23 14:39:20] SUCCESS: Email of type 'booking_confirmation' sent to 'koppisettilavanya111@gmail.com' successfully.
+[2026-08-05 19:18:34] SUCCESS: Email of type 'booking_confirmation' sent to 'testpassenger3@aeroqueue.com' successfully.
+[2026-08-05 19:18:35] SUCCESS: Email of type 'booking_confirmation' sent to 'testpassenger2@aeroqueue.com' successfully.
+[2026-08-05 19:18:35] SUCCESS: Email of type 'booking_confirmation' sent to 'testpassenger@aeroqueue.com' successfully.
+[2026-08-05 19:18:36] SUCCESS: Email of type 'ticket_cancellation' sent to 'testpassenger@aeroqueue.com' successfully.
+[2026-08-05 19:18:38] SUCCESS: Email of type 'refund_confirmation' sent to 'testpassenger@aeroqueue.com' successfully.

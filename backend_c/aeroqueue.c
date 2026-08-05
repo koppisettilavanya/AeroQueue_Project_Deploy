@@ -307,6 +307,21 @@ void detect_file_paths() {
 }
  
 void load_users() {
+    char absolute_path[512];
+#ifdef _WIN32
+    if (_fullpath(absolute_path, users_file_path, sizeof(absolute_path)) != NULL) {
+        printf("[DEBUG] Loading users from: %s\n", absolute_path);
+    } else {
+        printf("[DEBUG] Loading users from: %s\n", users_file_path);
+    }
+#else
+    if (realpath(users_file_path, absolute_path) != NULL) {
+        printf("[DEBUG] Loading users from: %s\n", absolute_path);
+    } else {
+        printf("[DEBUG] Loading users from: %s\n", users_file_path);
+    }
+#endif
+
     FILE* f = fopen(users_file_path, "r");
     if (!f) {
         printf("[STORAGE] [WARNING] Could not open users file '%s' for reading\n", users_file_path);
@@ -738,6 +753,25 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
  
         userCount++;
         save_users();
+
+        {
+            char absolute_path[512];
+#ifdef _WIN32
+            if (_fullpath(absolute_path, users_file_path, sizeof(absolute_path)) != NULL) {
+                printf("[DEBUG] Users file path: %s\n", absolute_path);
+            } else {
+                printf("[DEBUG] Users file path: %s\n", users_file_path);
+            }
+#else
+            if (realpath(users_file_path, absolute_path) != NULL) {
+                printf("[DEBUG] Users file path: %s\n", absolute_path);
+            } else {
+                printf("[DEBUG] Users file path: %s\n", users_file_path);
+            }
+#endif
+            printf("[DEBUG] Total users count: %d\n", userCount);
+        }
+
         send_json_response(clientSocket, 201, "Created", json);
         return;
     }
@@ -747,6 +781,18 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
         extract_json_value(body, "email", email, sizeof(email));
         extract_json_value(body, "password", password, sizeof(password));
  
+        printf("[DEBUG] Total loaded users: %d\n", userCount);
+        {
+            int emailExists = 0;
+            for (int i = 0; i < userCount; i++) {
+                if (str_case_cmp(users[i].email, email) == 0) {
+                    emailExists = 1;
+                    break;
+                }
+            }
+            printf("[DEBUG] Email exists: %s\n", emailExists ? "Yes" : "No");
+        }
+
         char hashed[65];
         hash_password(password, hashed);
  
@@ -774,6 +820,18 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
             printf("[AUTH] Google Sign-In failed: Missing email\n");
             send_json_response(clientSocket, 400, "Bad Request", "{\"error\":\"Missing email\"}");
             return;
+        }
+
+        printf("[DEBUG] Total loaded users: %d\n", userCount);
+        {
+            int emailExists = 0;
+            for (int i = 0; i < userCount; i++) {
+                if (str_case_cmp(users[i].email, email) == 0) {
+                    emailExists = 1;
+                    break;
+                }
+            }
+            printf("[DEBUG] Email exists: %s\n", emailExists ? "Yes" : "No");
         }
  
         // Check if user already exists (case-insensitive)
@@ -811,6 +869,25 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
  
             userCount++;
             save_users();
+
+            {
+                char absolute_path[512];
+#ifdef _WIN32
+                if (_fullpath(absolute_path, users_file_path, sizeof(absolute_path)) != NULL) {
+                    printf("[DEBUG] Users file path: %s\n", absolute_path);
+                } else {
+                    printf("[DEBUG] Users file path: %s\n", users_file_path);
+                }
+#else
+                if (realpath(users_file_path, absolute_path) != NULL) {
+                    printf("[DEBUG] Users file path: %s\n", absolute_path);
+                } else {
+                    printf("[DEBUG] Users file path: %s\n", users_file_path);
+                }
+#endif
+                printf("[DEBUG] Total users count: %d\n", userCount);
+            }
+
             send_json_response(clientSocket, 201, "Created", json);
         }
         return;

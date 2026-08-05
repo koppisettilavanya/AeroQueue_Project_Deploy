@@ -8,3 +8,4 @@
 8|John|Doe|tester@aeroqueue.com|+1234567890|008c70392e3abfbd0fa47bbc2ed96aa99bd49e159727fcba0f2e6abeb3a9d601|token_8|Active
 9|demo|user|demo@gmail.com|+91 7989987854|7063b467783b2f3b96cfc3a80ffc6da1d551a64fa139530a7af1a4bcc425d909|token_9|Active
 10|user|demo|userdemo@gmail.com|+91 7989987854|ff96673205dc722320598ebf8f88325b2ac56922d5a2164b5765868274bc0d73|token_10|Active
+11|Test|User|testregister1538109865@aeroqueue.com|999999999|008c70392e3abfbd0fa47bbc2ed96aa99bd49e159727fcba0f2e6abeb3a9d601|token_11|Active
