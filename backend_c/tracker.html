@@ -184,7 +184,7 @@
         res.style.display = 'none'; // Hide old results while searching
 
         try {
-            const resp = await fetch('https://aeroqueue-backend.onrender.com/api/flights');
+            const resp = await fetch('https://aeroqueue-project-deploy-ko88.onrender.com/api/flights');
             if (resp.ok) {
                 const data = await resp.json();
                 const flights = data.flights || [];
@@ -410,7 +410,7 @@
         res.style.display = 'none'; // Hide old results while searching
 
         try {
-            const resp = await fetch('https://aeroqueue-backend.onrender.com/api/flights');
+            const resp = await fetch('https://aeroqueue-project-deploy-ko88.onrender.com/api/flights');
             if (resp.ok) {
                 const data = await resp.json();
                 const flights = data.flights || [];

@@ -1320,6 +1320,64 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
         return;
     }
  
+    // Static file serving fallback
+    if (strcmp(method, "GET") == 0) {
+        char cleanFilename[256];
+        strncpy(cleanFilename, path[0] == '/' ? path + 1 : path, sizeof(cleanFilename) - 1);
+        cleanFilename[sizeof(cleanFilename) - 1] = '\0';
+        char* q = strchr(cleanFilename, '?');
+        if (q) *q = '\0';
+        char* h = strchr(cleanFilename, '#');
+        if (h) *h = '\0';
+
+        if (strlen(cleanFilename) == 0) {
+            strcpy(cleanFilename, "index.html");
+        }
+
+        if (strstr(cleanFilename, "..") == NULL) {
+            char filepath[512];
+            snprintf(filepath, sizeof(filepath), "%s%s", email_dir_prefix, cleanFilename);
+            FILE* file = fopen(filepath, "rb");
+            if (file) {
+                fseek(file, 0, SEEK_END);
+                long fileSize = ftell(file);
+                fseek(file, 0, SEEK_SET);
+
+                const char* ext = strrchr(cleanFilename, '.');
+                const char* contentType = "application/octet-stream";
+                if (ext) {
+                    if (str_case_cmp(ext, ".html") == 0) contentType = "text/html";
+                    else if (str_case_cmp(ext, ".css") == 0) contentType = "text/css";
+                    else if (str_case_cmp(ext, ".js") == 0) contentType = "application/javascript";
+                    else if (str_case_cmp(ext, ".png") == 0) contentType = "image/png";
+                    else if (str_case_cmp(ext, ".jpg") == 0 || str_case_cmp(ext, ".jpeg") == 0) contentType = "image/jpeg";
+                    else if (str_case_cmp(ext, ".gif") == 0) contentType = "image/gif";
+                    else if (str_case_cmp(ext, ".svg") == 0) contentType = "image/svg+xml";
+                    else if (str_case_cmp(ext, ".ico") == 0) contentType = "image/x-icon";
+                }
+
+                char responseHeader[512];
+                snprintf(responseHeader, sizeof(responseHeader),
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: %s\r\n"
+                    "Content-Length: %ld\r\n"
+                    "Access-Control-Allow-Origin: *\r\n"
+                    "Connection: close\r\n"
+                    "\r\n", contentType, fileSize);
+                
+                send(clientSocket, responseHeader, strlen(responseHeader), 0);
+
+                char fileBuffer[4096];
+                size_t bytesRead;
+                while ((bytesRead = fread(fileBuffer, 1, sizeof(fileBuffer), file)) > 0) {
+                    send(clientSocket, fileBuffer, bytesRead, 0);
+                }
+                fclose(file);
+                return;
+            }
+        }
+    }
+
     // Default 404
     send_json_response(clientSocket, 404, "Not Found", "{\"error\":\"Not Found\"}");
 }
