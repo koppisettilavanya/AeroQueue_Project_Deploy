@@ -392,7 +392,69 @@
         const statusLabel = document.getElementById('statusLabel');
         const mainPayBtn  = document.getElementById('mainPayBtn');
 
+        const adults = parseInt(localStorage.getItem("adults")) || 1;
+        const children = parseInt(localStorage.getItem("children")) || 0;
+        const totalPassengers = adults + children;
+
+        // Clear default non-selection values if present
+        const savedSeat = localStorage.getItem("selectedSeat");
+        if (savedSeat === "Assigned on Check-in") {
+            localStorage.removeItem("selectedSeat");
+        }
+
+        let selectedSeats = [];
+        const savedSeatStr = localStorage.getItem("selectedSeat");
+        if (savedSeatStr) {
+            selectedSeats = savedSeatStr.split(", ");
+        }
+
         let waitingList = 0;
+
+        function updateSidebar() {
+            let totalBase = 0;
+            let totalFuel = 0;
+            let totalAirport = 0;
+            let totalService = 0;
+            let totalGst = 0;
+            let totalAmt = 0;
+            
+            selectedSeats.forEach(seat => {
+                const rowNum = parseInt(seat);
+                const colLetter = seat.slice(-1);
+                const p = getSeatPricing(rowNum, colLetter);
+                totalBase += p.base;
+                totalFuel += p.fuel;
+                totalAirport += p.airport;
+                totalService += p.service;
+                totalGst += p.gst;
+                totalAmt += p.total;
+            });
+
+            if (selectedSeats.length > 0) {
+                seatNum.innerText = selectedSeats.join(", ");
+                statusLabel.innerText = "CHOSEN SEATS (" + selectedSeats.length + "/" + totalPassengers + ")";
+                statusLabel.style.color = "var(--primary)";
+                localStorage.setItem("selectedSeat", selectedSeats.join(", "));
+                localStorage.setItem("finalPaymentTotal", "₹" + totalAmt.toLocaleString('en-IN'));
+                
+                if (selectedSeats.length === totalPassengers) {
+                    mainPayBtn.innerText = "CONFIRM SEATS & PAY (₹" + totalAmt.toLocaleString('en-IN') + ") →";
+                    mainPayBtn.style.opacity = "1";
+                } else {
+                    mainPayBtn.innerText = "SELECT " + (totalPassengers - selectedSeats.length) + " MORE SEAT(S) TO CONTINUE";
+                    mainPayBtn.style.opacity = "0.7";
+                }
+                mainPayBtn.style.display = "block";
+            } else {
+                seatNum.innerText = "--";
+                statusLabel.innerText = "CHOSEN SEATS (0/" + totalPassengers + ")";
+                localStorage.removeItem("selectedSeat");
+                localStorage.removeItem("finalPaymentTotal");
+                mainPayBtn.innerText = "SELECT " + totalPassengers + " SEAT(S) TO CONTINUE";
+                mainPayBtn.style.opacity = "0.7";
+                mainPayBtn.style.display = "block";
+            }
+        }
 
         async function buildSeatGrid() {
             grid.innerHTML = '';
@@ -437,13 +499,18 @@
                     } else {
                         const div = document.createElement('div');
                         div.className = 'seat';
-                        div.innerText = r + c;
+                        const seatName = r + c;
+                        div.innerText = seatName;
 
-                        const isSold = occupiedSeats.includes(r + c);
+                        const isSold = occupiedSeats.includes(seatName);
                         if (isSold) {
                             div.classList.add('sold');
                         } else if (c === 'A' || c === 'F') {
                             div.classList.add('best');
+                        }
+
+                        if (selectedSeats.includes(seatName)) {
+                            div.classList.add('selected');
                         }
 
                         div.addEventListener('mouseenter', (e) => showTooltip(e, r, c, isSold));
@@ -451,27 +518,29 @@
                         div.addEventListener('mouseleave', hideTooltip);
 
                         div.onclick = () => {
-                            document.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
-                            div.classList.add('selected');
-                            
-                            const finalDetails = getSeatPricing(r, c);
-                            localStorage.setItem("selectedSeat", r + c);
-                            localStorage.setItem("finalPaymentTotal", "₹" + finalDetails.total.toLocaleString('en-IN'));
-                            
-                            seatNum.innerText = r + c;
-                            statusLabel.innerText = "CHOSEN SEAT";
-                            statusLabel.style.color = "var(--primary)";
-                            waitlistAction.style.display = "none";
-                            standardActions.style.display = "block";
-                            mainPayBtn.style.display = "block";
-                            
-                            mainPayBtn.innerText = "CONFIRM SEAT & PAY (₹" + finalDetails.total.toLocaleString('en-IN') + ") →";
+                            if (isSold) return;
+
+                            if (selectedSeats.includes(seatName)) {
+                                selectedSeats = selectedSeats.filter(s => s !== seatName);
+                                div.classList.remove('selected');
+                            } else {
+                                if (selectedSeats.length >= totalPassengers) {
+                                    alert(`You can only select up to ${totalPassengers} seat(s). Please deselect a seat first.`);
+                                    return;
+                                }
+                                selectedSeats.push(seatName);
+                                div.classList.add('selected');
+                            }
+                            updateSidebar();
                         };
 
                         grid.appendChild(div);
                     }
                 });
             }
+
+            // Sync visual status state on grid render completion
+            updateSidebar();
         }
 
         buildSeatGrid();
@@ -492,10 +561,8 @@
         }
 
 function goToPayment() {
-    const selected = seatNum.innerText;
-
-    if (selected === "--") {
-        alert("Please select a seat to proceed.");
+    if (selectedSeats.length !== totalPassengers) {
+        alert(`Please select exactly ${totalPassengers} seat(s) to proceed.`);
         return;
     }
 

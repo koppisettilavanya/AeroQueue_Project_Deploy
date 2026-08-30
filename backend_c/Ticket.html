@@ -218,7 +218,13 @@
         const toCity = localStorage.getItem('toCity') || '';
         const travelDate = localStorage.getItem('travelDate') || '--';
  
-        if (selectedSeat) document.getElementById('dispSeat').innerText = selectedSeat;
+        if (selectedSeat) {
+            document.getElementById('dispSeat').innerText = selectedSeat;
+            if (selectedSeat.includes(",")) {
+                const labelEl = document.getElementById('dispSeat').previousElementSibling;
+                if (labelEl) labelEl.innerText = "Seat Numbers";
+            }
+        }
         if (ticketNumber) document.getElementById('dispTicketNumber').innerText = ticketNumber;
         if (fName && lName) document.getElementById('dispPassenger').innerText = fName + ' ' + lName;
         document.getElementById('dispDate').innerText = travelDate;

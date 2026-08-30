@@ -182,17 +182,22 @@
 
     const listContainer = document.getElementById("passengerList");
 
-    function generatePassengerHTML(type, index) {
+    function generatePassengerHTML(type, index, seat) {
         const isChild = type === "Child";
         const countryOptions = worldwideNationalities.map(country => 
             `<option value="${country}" ${country === "India" ? "selected" : ""}>${country}</option>`
         ).join("");
 
+        const seatBadge = seat ? `<span class="seat-badge" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; margin-left: 10px;">Seat ${seat}</span>` : '';
+
         return `
             <div class="passenger-card" data-type="${type}">
-                <div class="card-header">
-                    <span class="type-badge">${type.toUpperCase()} ${index}</span>
-                    <h3 style="margin:0; font-size:1rem;">Traveler Info</h3>
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="type-badge">${type.toUpperCase()} ${index}</span>
+                        <h3 style="margin:0; font-size:1rem;">Traveler Info</h3>
+                    </div>
+                    ${seatBadge}
                 </div>
                 <div class="form-grid">
                     <div class="input-group"><label>Title</label><select><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select></div>
@@ -214,8 +219,20 @@
             </div>`;
     }
 
-    for (let i = 1; i <= adults; i++) listContainer.innerHTML += generatePassengerHTML("Adult", i);
-    for (let i = 1; i <= children; i++) listContainer.innerHTML += generatePassengerHTML("Child", i);
+    const savedSeatsStr = localStorage.getItem("selectedSeat");
+    const savedSeats = savedSeatsStr && !savedSeatsStr.includes("Assigned") ? savedSeatsStr.split(", ") : [];
+
+    let seatIndex = 0;
+    for (let i = 1; i <= adults; i++) {
+        const seat = savedSeats[seatIndex] || "";
+        listContainer.innerHTML += generatePassengerHTML("Adult", i, seat);
+        seatIndex++;
+    }
+    for (let i = 1; i <= children; i++) {
+        const seat = savedSeats[seatIndex] || "";
+        listContainer.innerHTML += generatePassengerHTML("Child", i, seat);
+        seatIndex++;
+    }
 
     // Dynamic Helper Calculation for precise Age validation structural rules
     function getCalculatedAge(birthDateString) {

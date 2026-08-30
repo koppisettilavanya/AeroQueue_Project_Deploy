@@ -1086,6 +1086,7 @@ function saveFlightData() {
     localStorage.setItem("departureDate", deptDate);
     localStorage.setItem("adults", passengerData.adult);
     localStorage.setItem("children", passengerData.child);
+    localStorage.setItem("totalPassengers", passengerData.adult + passengerData.child);
     return true;
 }
 

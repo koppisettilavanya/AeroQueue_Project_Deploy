@@ -350,7 +350,7 @@
             
             initialTotalAmount = parseInt(calculatedTotalStr.replace(/[^\d]/g, '')) || 4500;
  
-            document.getElementById('finalSeat').innerText = savedSeat.startsWith("Seat") ? savedSeat : "Seat " + savedSeat;
+            document.getElementById('finalSeat').innerText = savedSeat.includes(",") ? "Seats " + savedSeat : (savedSeat.startsWith("Seat") ? savedSeat : "Seat " + savedSeat);
             document.getElementById('seatTotal').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
             document.getElementById('finalPrice').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
             

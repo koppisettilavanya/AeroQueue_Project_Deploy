@@ -583,7 +583,8 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
-    const endpoint = currentMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const localAuthUrl = 'http://localhost:5000';
+    const cBackendUrl = 'https://aeroqueue-project-deploy-ko88.onrender.com';
  
     if (currentMode === 'signup') {
         const failed = rules.filter(r => !r.test(password));
@@ -593,41 +594,130 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
         }
     }
  
-    let bodyData = { email, password };
- 
     if (currentMode === 'signup') {
         const firstName = document.getElementById('regFirstName').value;
         const lastName = document.getElementById('regLastName').value;
         const countryCode = document.getElementById('countryPopulate').value;
         const phone = document.getElementById('regPhone').value;
  
-        bodyData = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: "+" + countryCode + " " + phone,
-            password: password
-        };
-    }
+        try {
+            // 1. Register with local Supabase auth server
+            const localResponse = await fetch(`${localAuthUrl}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: firstName + " " + lastName,
+                    email: email,
+                    password: password
+                })
+            });
  
-    try {
-        const response = await fetch(`https://aeroqueue-project-deploy-ko88.onrender.com${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bodyData)
-        });
+            const localData = await localResponse.json().catch(() => ({}));
  
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            window.location.href = 'Search.html';
-        } else {
-            const errData = await response.json().catch(() => ({}));
-            alert('Authentication failed! ' + (errData.error || ''));
+            if (!localResponse.ok) {
+                alert('Supabase Registration failed! ' + (localData.message || ''));
+                return;
+            }
+ 
+            // 2. Register/Sync with C backend
+            const cBodyData = {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: "+" + countryCode + " " + phone,
+                password: password
+            };
+ 
+            const cResponse = await fetch(`${cBackendUrl}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cBodyData)
+            });
+ 
+            if (cResponse.ok) {
+                const cData = await cResponse.json();
+                localStorage.setItem('token', cData.token);
+                window.location.href = 'Search.html';
+            } else {
+                // If user already exists in C backend, log them in to get token
+                const loginResponse = await fetch(`${cBackendUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+ 
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    localStorage.setItem('token', loginData.token);
+                    window.location.href = 'Search.html';
+                } else {
+                    const cErrData = await cResponse.json().catch(() => ({}));
+                    alert('Registration synced but C backend session setup failed: ' + (cErrData.error || ''));
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Could not connect to server during registration.');
         }
-    } catch (err) {
-        console.error(err);
-        alert('Could not connect to server.');
+    } else {
+        // Login Flow
+        try {
+            // 1. Login with local Supabase auth server
+            const localResponse = await fetch(`${localAuthUrl}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+ 
+            const localData = await localResponse.json().catch(() => ({}));
+ 
+            if (!localResponse.ok) {
+                alert('Supabase Login failed! ' + (localData.message || 'Invalid credentials'));
+                return;
+            }
+ 
+            // 2. Fetch C backend token for session
+            const cResponse = await fetch(`${cBackendUrl}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+ 
+            if (cResponse.ok) {
+                const cData = await cResponse.json();
+                localStorage.setItem('token', cData.token);
+                window.location.href = 'Search.html';
+            } else {
+                // User is in Supabase but not in C backend (e.g. registered externally / C backend wiped)
+                // Register the user automatically in the C backend to keep it functional.
+                const nameParts = (localData.user && localData.user.name) ? localData.user.name.split(' ') : ['', ''];
+                const firstName = nameParts[0] || 'Supabase';
+                const lastName = nameParts.slice(1).join(' ') || 'User';
+ 
+                const cRegResponse = await fetch(`${cBackendUrl}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        phone: 'Supabase Sync',
+                        password: password
+                    })
+                });
+ 
+                if (cRegResponse.ok) {
+                    const cRegData = await cRegResponse.json();
+                    localStorage.setItem('token', cRegData.token);
+                    window.location.href = 'Search.html';
+                } else {
+                    alert('Authenticated with Supabase, but C backend session initialization failed.');
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Could not connect to server during login.');
+        }
     }
 });
  
