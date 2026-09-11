@@ -396,15 +396,9 @@
         const children = parseInt(localStorage.getItem("children")) || 0;
         const totalPassengers = adults + children;
 
-        // Clear default non-selection values if present
-        const savedSeat = localStorage.getItem("selectedSeat");
-        if (savedSeat === "Assigned on Check-in") {
-            localStorage.removeItem("selectedSeat");
-        }
-
         let selectedSeats = [];
         const savedSeatStr = localStorage.getItem("selectedSeat");
-        if (savedSeatStr) {
+        if (savedSeatStr && !savedSeatStr.includes("Assigned") && !savedSeatStr.includes("Not Selected")) {
             selectedSeats = savedSeatStr.split(", ");
         }
 
@@ -518,8 +512,6 @@
                         div.addEventListener('mouseleave', hideTooltip);
 
                         div.onclick = () => {
-                            if (isSold) return;
-
                             if (selectedSeats.includes(seatName)) {
                                 selectedSeats = selectedSeats.filter(s => s !== seatName);
                                 div.classList.remove('selected');

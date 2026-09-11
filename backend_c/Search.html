@@ -1087,6 +1087,9 @@ function saveFlightData() {
     localStorage.setItem("adults", passengerData.adult);
     localStorage.setItem("children", passengerData.child);
     localStorage.setItem("totalPassengers", passengerData.adult + passengerData.child);
+    localStorage.removeItem("selectedSeat");
+    localStorage.removeItem("finalPaymentTotal");
+    localStorage.removeItem("paymentDone");
     return true;
 }
 
