@@ -72,10 +72,7 @@
 <body>
  
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <a href="Search.html" class="back-link" style="margin-bottom: 0;">← Back to Home</a>
-        <a href="Refund.html" class="back-link" style="color: #7c3aed; margin-bottom: 0;">💰 Refund Portal</a>
-    </div>
+    <a href="Search.html" class="back-link">← Back to Home</a>
     <h2>User Dashboard</h2>
     
     <div id="tickets-container">
@@ -145,8 +142,7 @@
                                         <small>Travel Date: ${b.travelDate || 'N/A'}</small>
                                     </div>
                                     <div style="text-align: right;">
-                                        <strong>Status:</strong><br> ${statusText}<br>
-                                        <a href="Refund.html" style="display: inline-block; margin-top: 10px; padding: 6px 12px; background: #4f46e5; color: white; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600;">Request Refund 💰</a>
+                                        <strong>Status:</strong><br> ${statusText}
                                     </div>
                                 </div>
                             `;
