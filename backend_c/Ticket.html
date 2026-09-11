@@ -13,7 +13,7 @@
             --text-main: #1e293b;
             --glass: rgba(255, 255, 255, 0.95);
         }
- 
+
         body {
             margin: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -25,7 +25,7 @@
             justify-content: center;
             padding: 20px;
         }
- 
+
         .ticket-container {
             background: var(--glass);
             width: 100%;
@@ -35,19 +35,19 @@
             overflow: hidden;
             animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
- 
+
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
- 
+
         .success-banner {
             background: var(--success);
             color: white;
             padding: 30px;
             text-align: center;
         }
- 
+
         .success-icon {
             width: 60px;
             height: 60px;
@@ -59,12 +59,12 @@
             font-size: 30px;
             margin: 0 auto 15px;
         }
- 
+
         .ticket-body {
             padding: 40px;
             position: relative;
         }
- 
+
         .airline-brand {
             font-weight: 800;
             color: var(--primary);
@@ -73,34 +73,34 @@
             display: flex;
             justify-content: space-between;
         }
- 
+
         .flight-info {
             display: flex;
             justify-content: space-between;
             margin-bottom: 40px;
         }
- 
+
         .city-code {
             font-size: 2.5rem;
             font-weight: 900;
             margin: 0;
         }
- 
+
         .city-name {
             font-size: 0.8rem;
             color: #64748b;
             font-weight: 700;
             text-transform: uppercase;
         }
- 
+
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
+            gap: 20px;
             border-top: 2px dashed #e2e8f0;
-            padding-top: 30px;
+            padding-top: 25px;
         }
- 
+
         .label {
             font-size: 0.7rem;
             font-weight: 800;
@@ -108,20 +108,20 @@
             text-transform: uppercase;
             margin-bottom: 5px;
         }
- 
+
         .value {
             font-weight: 700;
             color: var(--text-main);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
- 
+
         .barcode-section {
             background: #f8fafc;
             padding: 30px;
             text-align: center;
             border-top: 2px dashed #e2e8f0;
         }
- 
+
         .barcode {
             width: 100%;
             height: 60px;
@@ -129,42 +129,81 @@
             background-size: 40px 100%;
             margin-bottom: 10px;
         }
- 
+
         .btn-download {
             display: block;
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             background: var(--primary);
             color: white;
             text-align: center;
             text-decoration: none;
             font-weight: 800;
             border-radius: 15px;
-            margin-top: 20px;
+            margin-top: 15px;
             cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25);
+            transition: all 0.3s ease;
         }
- 
+
         .btn-download:hover {
             filter: brightness(1.1);
+            transform: translateY(-1px);
         }
- 
+
+        .actions-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .btn-secondary-action {
+            flex: 1;
+            padding: 14px;
+            background: #ffffff;
+            color: var(--text-main);
+            text-align: center;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary-action:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .ticket-container { box-shadow: none !important; border: 1px solid #ccc !important; max-width: 100% !important; }
+            .btn-download, .actions-row, .print-hide { display: none !important; }
+        }
     </style>
 </head>
 <body>
- 
+
     <div class="ticket-container">
         <div class="success-banner" id="statusBanner">
             <div class="success-icon">✓</div>
             <h2 style="margin:0;" id="statusTitle">Booking Confirmed!</h2>
             <p style="margin:5px 0 0; opacity:0.9;" id="statusDesc">Your journey is ready with AeroQueue</p>
         </div>
- 
+
         <div class="ticket-body">
             <div class="airline-brand">
                 <span>AEROQUEUE AIRWAYS</span>
-                <span id="dispFlightNumber">FLIGHT AQ-402</span>
+                <span id="dispFlightNumber">AQ-402</span>
             </div>
- 
+
             <div class="flight-info">
                 <div>
                     <p class="city-name">Departure</p>
@@ -178,38 +217,59 @@
                     <p class="city-name" id="arrName">--</p>
                 </div>
             </div>
- 
+
             <div class="info-grid">
                 <div>
                     <p class="label">Passenger</p>
                     <p class="value" id="dispPassenger">Verified Traveler</p>
                 </div>
                 <div>
+                    <p class="label">Booking / Ticket No.</p>
+                    <p class="value" id="dispTicketNoGrid" style="font-size: 0.95rem; color: var(--primary);">--</p>
+                </div>
+                <div>
+                    <p class="label">Flight Number</p>
+                    <p class="value" id="dispFlightGrid">AQ-402</p>
+                </div>
+                <div>
                     <p class="label">Seat Number</p>
                     <p class="value" id="dispSeat" style="color: var(--primary);">--</p>
                 </div>
                 <div>
-                    <p class="label">Date</p>
-                    <p class="value" id="dispDate">--</p>
+                    <p class="label">Date & Time</p>
+                    <p class="value" id="dispDateTime">-- | 10:00 AM</p>
                 </div>
                 <div>
-                    <p class="label">Terminal</p>
-                    <p class="value">T2</p>
+                    <p class="label">Passengers</p>
+                    <p class="value" id="dispPassengersCount">1 Traveler</p>
+                </div>
+                <div>
+                    <p class="label">Total Amount</p>
+                    <p class="value" id="dispFare">--</p>
+                </div>
+                <div>
+                    <p class="label">Booking Status</p>
+                    <p class="value" id="dispStatusText" style="color: var(--success);">CONFIRMED</p>
                 </div>
             </div>
         </div>
- 
+
         <div class="barcode-section">
             <div class="barcode"></div>
             <p style="font-size: 0.7rem; font-weight: 800; color: #94a3b8;" id="dispTicketNumber">--</p>
             
-            <a href="#" class="btn-download" onclick="window.print()">DOWNLOAD E-TICKET (PDF)</a>
-            <p style="font-size: 0.7rem; margin-top: 15px; color: #64748b;">A copy of this ticket has been sent to your email.</p>
+            <button type="button" class="btn-download" onclick="downloadTicket()">📥 DOWNLOAD E-TICKET (PDF)</button>
+
+            <div class="actions-row">
+                <a href="dashboard.html" class="btn-secondary-action">📊 Go to Dashboard</a>
+                <a href="Refund.html" class="btn-secondary-action">💰 Request Refund</a>
+            </div>
+
+            <p style="font-size: 0.7rem; margin-top: 15px; color: #64748b;" class="print-hide">A copy of this ticket has been saved to your account session.</p>
         </div>
     </div>
- 
+
     <script>
- 
         const selectedSeat = localStorage.getItem('selectedSeat');
         const ticketNumber = localStorage.getItem('ticketNumber');
         const fName = localStorage.getItem('passengerFirstName');
@@ -217,32 +277,44 @@
         const fromCity = localStorage.getItem('fromCity') || '';
         const toCity = localStorage.getItem('toCity') || '';
         const travelDate = localStorage.getItem('travelDate') || '--';
- 
+        const fareTotal = localStorage.getItem('finalPaymentTotal') || localStorage.getItem('seatFare') || localStorage.getItem('ticketPrice') || '--';
+        const numPassengers = localStorage.getItem('totalPassengers') || '1';
+        const airlineName = localStorage.getItem('airlineName') || 'AQ-402';
+
         if (selectedSeat) {
             document.getElementById('dispSeat').innerText = selectedSeat;
-            if (selectedSeat.includes(",")) {
-                const labelEl = document.getElementById('dispSeat').previousElementSibling;
-                if (labelEl) labelEl.innerText = "Seat Numbers";
-            }
         }
-        if (ticketNumber) document.getElementById('dispTicketNumber').innerText = ticketNumber;
-        if (fName && lName) document.getElementById('dispPassenger').innerText = fName + ' ' + lName;
-        document.getElementById('dispDate').innerText = travelDate;
- 
+        if (ticketNumber) {
+            document.getElementById('dispTicketNumber').innerText = ticketNumber;
+            document.getElementById('dispTicketNoGrid').innerText = ticketNumber;
+        }
+        if (fName || lName) {
+            document.getElementById('dispPassenger').innerText = ((fName || '') + ' ' + (lName || '')).trim();
+        }
+        document.getElementById('dispDateTime').innerText = `${travelDate} | 10:00 AM`;
+        document.getElementById('dispPassengersCount').innerText = `${numPassengers} Traveler${numPassengers > 1 ? 's' : ''}`;
+        document.getElementById('dispFare').innerText = fareTotal;
+        document.getElementById('dispFlightNumber').innerText = airlineName;
+        document.getElementById('dispFlightGrid').innerText = airlineName;
+
         function parseCity(cityStr) {
             if (!cityStr) return { code: '---', name: '--' };
             const match = cityStr.match(/(.*?)\s*\(([A-Z]{3})\)/);
             if (match) return { code: match[2], name: match[1].trim() };
             return { code: cityStr.substring(0, 3).toUpperCase(), name: cityStr };
         }
- 
+
         const dep = parseCity(fromCity);
         const arr = parseCity(toCity);
         document.getElementById('depCode').innerText = dep.code;
         document.getElementById('depName').innerText = dep.name;
         document.getElementById('arrCode').innerText = arr.code;
         document.getElementById('arrName').innerText = arr.name;
- 
+
+        function downloadTicket() {
+            window.print();
+        }
+
         async function updateBookingStatus() {
             if (!ticketNumber) return;
             try {
@@ -252,26 +324,33 @@
                     const banner = document.getElementById('statusBanner');
                     const title = document.getElementById('statusTitle');
                     const desc = document.getElementById('statusDesc');
- 
+                    const statusTextEl = document.getElementById('dispStatusText');
+
                     if (data.status === 'WAITLISTED') {
                         banner.style.background = '#f59e0b';
                         title.innerText = 'Booking Waitlisted';
                         desc.innerText = `Your FIFO Queue Position: ${data.queuePosition}`;
+                        statusTextEl.innerText = `WAITLISTED (#${data.queuePosition})`;
+                        statusTextEl.style.color = '#f59e0b';
                     } else if (data.status === 'CONFIRMED') {
                         banner.style.background = 'var(--success)';
                         title.innerText = 'Booking Confirmed!';
                         desc.innerText = 'Your journey is ready with AeroQueue';
+                        statusTextEl.innerText = 'CONFIRMED';
+                        statusTextEl.style.color = 'var(--success)';
                     } else if (data.status === 'CANCELLED') {
                         banner.style.background = '#ef4444';
                         title.innerText = 'Booking Cancelled';
                         desc.innerText = 'Your booking has been cancelled.';
+                        statusTextEl.innerText = 'CANCELLED';
+                        statusTextEl.style.color = '#ef4444';
                     }
                 }
             } catch (err) {
                 console.error('Failed to fetch status', err);
             }
         }
- 
+
         updateBookingStatus();
         setInterval(updateBookingStatus, 3000);
     </script>

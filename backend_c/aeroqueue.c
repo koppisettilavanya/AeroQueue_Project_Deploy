@@ -1411,6 +1411,30 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
             strcpy(cleanFilename, "index.html");
         }
 
+        if (str_case_cmp(cleanFilename, "refund.html") == 0 || str_case_cmp(cleanFilename, "refund") == 0) {
+            strcpy(cleanFilename, "Refund.html");
+        } else if (str_case_cmp(cleanFilename, "search.html") == 0 || str_case_cmp(cleanFilename, "search") == 0) {
+            strcpy(cleanFilename, "Search.html");
+        } else if (str_case_cmp(cleanFilename, "ticket.html") == 0 || str_case_cmp(cleanFilename, "ticket") == 0) {
+            strcpy(cleanFilename, "Ticket.html");
+        } else if (str_case_cmp(cleanFilename, "dashboard.html") == 0 || str_case_cmp(cleanFilename, "dashboard") == 0) {
+            strcpy(cleanFilename, "dashboard.html");
+        } else if (str_case_cmp(cleanFilename, "passenger.html") == 0 || str_case_cmp(cleanFilename, "passenger") == 0) {
+            strcpy(cleanFilename, "Passenger.html");
+        } else if (str_case_cmp(cleanFilename, "seat.html") == 0 || str_case_cmp(cleanFilename, "seat") == 0) {
+            strcpy(cleanFilename, "Seat.html");
+        } else if (str_case_cmp(cleanFilename, "payment.html") == 0 || str_case_cmp(cleanFilename, "payment") == 0) {
+            strcpy(cleanFilename, "Payment.html");
+        } else if (str_case_cmp(cleanFilename, "flight.html") == 0 || str_case_cmp(cleanFilename, "flight") == 0) {
+            strcpy(cleanFilename, "Flight.html");
+        } else if (str_case_cmp(cleanFilename, "fare.html") == 0 || str_case_cmp(cleanFilename, "fare") == 0) {
+            strcpy(cleanFilename, "Fare.html");
+        } else if (str_case_cmp(cleanFilename, "login.html") == 0 || str_case_cmp(cleanFilename, "login") == 0) {
+            strcpy(cleanFilename, "Login.html");
+        } else if (str_case_cmp(cleanFilename, "cancellation.html") == 0 || str_case_cmp(cleanFilename, "cancellation") == 0 || str_case_cmp(cleanFilename, "cancel") == 0) {
+            strcpy(cleanFilename, "cancellation.html");
+        }
+
         if (strstr(cleanFilename, "..") == NULL) {
             char filepath[512];
             snprintf(filepath, sizeof(filepath), "%s%s", email_dir_prefix, cleanFilename);

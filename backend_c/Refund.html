@@ -216,8 +216,19 @@
 
         // FUNCTION 2: Logic to return to the search flight page
         function goBack() {
-            window.history.back();
+            window.location.href = "Search.html";
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const tNo = localStorage.getItem('ticketNumber');
+            const pEmail = localStorage.getItem('passengerEmail') || localStorage.getItem('userEmail');
+            if (tNo && document.getElementById('refId')) {
+                document.getElementById('refId').value = tNo;
+            }
+            if (pEmail && document.getElementById('email')) {
+                document.getElementById('email').value = pEmail;
+            }
+        });
     </script>
 
 </body>
