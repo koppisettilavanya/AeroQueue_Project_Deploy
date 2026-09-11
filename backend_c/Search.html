@@ -645,7 +645,7 @@
                 </div>
             </div>
 
-            <div class="offer-card" onclick="openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer ends on July 15, 2026.')">
+            <div class="offer-card" onclick="openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer is permanently available for students with valid ID.')">
                 <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop');"></div>
                 <div class="offer-body">
                     <span class="offer-tag">Student Deal</span>
@@ -658,7 +658,7 @@
                 </div>
             </div>
 
-            <div class="offer-card" onclick="openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on June 30, 2026.')">
+            <div class="offer-card" onclick="openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on December 31, 2028.')">
                 <div class="offer-image-box" style="background-image: url('https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=800&auto=format&fit=crop');"></div>
                 <div class="offer-body">
                     <span class="offer-tag">Bank Offer</span>
@@ -821,8 +821,8 @@
             <h3>All Offers</h3><span onclick="toggleDrawer()" style="cursor:pointer; font-size:1.8rem;">&times;</span>
         </div>
         <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('FLYNEW30', 'First Booking Discount', 'Get a flat $30 off on your first flight booking. Valid for new customers on international routes.', 'This offer ends on December 31, 2026.')"><h5 style="color:var(--primary);">FLYNEW30</h5><p>Save $30 on first flight.</p></div>
-        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer ends on July 15, 2026.')"><h5 style="color:var(--primary);">STUDENT24</h5><p>10% Student discount.</p></div>
-        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on June 30, 2026.')"><h5 style="color:var(--primary);">HDFCSAVE</h5><p>15% HDFC Cashback.</p></div>
+        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('STUDENT24', 'Student Special Fare', 'Exclusive 10% discount on base fares and 10kg extra baggage for students. Valid Student ID mandatory.', 'This offer is permanently available for students with valid ID.')"><h5 style="color:var(--primary);">STUDENT24</h5><p>10% Student discount.</p></div>
+        <div class="scroll-offer-item" onclick="toggleDrawer(); openOfferDetail('HDFCSAVE', 'HDFC Bank Offer', 'Enjoy 15% instant cashback up to $150 on HDFC bank credit cards. Minimum transaction $500.', 'This offer ends on December 31, 2028.')"><h5 style="color:var(--primary);">HDFCSAVE</h5><p>15% HDFC Cashback.</p></div>
     </div>
 </div>
 
@@ -1080,10 +1080,30 @@ function saveFlightData() {
     else { clearError('toBox'); }
     if (from && to && from === to) { document.getElementById('toBox').classList.add('error'); valid = false; }
     if (!deptDate) { alert("Please select a departure date."); valid = false; }
+
+    const isRoundTrip = document.getElementById('tab-round') && document.getElementById('tab-round').classList.contains('active');
+    const returnInput = document.getElementById('return-input');
+    let returnDate = '';
+    if (isRoundTrip) {
+        returnDate = returnInput ? returnInput.value : '';
+        if (!returnDate) {
+            alert("Please select a return date for round-trip booking.");
+            valid = false;
+        }
+    }
+
     if (!valid) return false;
     localStorage.setItem("searchFrom", from);
     localStorage.setItem("searchTo", to);
     localStorage.setItem("departureDate", deptDate);
+    localStorage.setItem("travelDate", deptDate);
+    if (isRoundTrip) {
+        localStorage.setItem("tripType", "round");
+        localStorage.setItem("returnDate", returnDate);
+    } else {
+        localStorage.setItem("tripType", "oneway");
+        localStorage.removeItem("returnDate");
+    }
     localStorage.setItem("adults", passengerData.adult);
     localStorage.setItem("children", passengerData.child);
     localStorage.setItem("totalPassengers", passengerData.adult + passengerData.child);

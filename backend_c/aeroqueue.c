@@ -60,6 +60,7 @@ typedef struct {
     char origin[50];
     char destination[50];
     char travelDate[30];
+    char returnDate[30];
     int isConfirmed; // 1 = Confirmed, 0 = Waitlisted, -1 = Cancelled
     long timestamp;  // For FIFO ordering
     char paymentStatus[20];
@@ -385,8 +386,8 @@ void load_bookings() {
         line[strcspn(line, "\r\n")] = '\0';
         if (strlen(line) == 0) continue;
  
-        char fields[14][100];
-        safe_split(line, fields, 14);
+        char fields[15][100];
+        safe_split(line, fields, 15);
         
         if (strlen(fields[0]) == 0 || strlen(fields[3]) == 0) {
             continue;
@@ -415,6 +416,12 @@ void load_bookings() {
             strcpy(b->passengerEmail, fields[13]);
         } else {
             strcpy(b->passengerEmail, "");
+        }
+
+        if (strlen(fields[14]) > 0) {
+            strcpy(b->returnDate, fields[14]);
+        } else {
+            strcpy(b->returnDate, "");
         }
         
         // Dynamic Flight Reconstruction at Startup
@@ -452,8 +459,8 @@ void save_bookings() {
     }
     for (int i = 0; i < bookingCount; i++) {
         Booking* b = &bookings[i];
-        fprintf(f, "%d|%d|%d|%s|%s|%s|%s|%s|%s|%s|%d|%ld|%s|%s\n",
-                b->id, b->userId, b->flightId, b->ticketNumber, b->seatNumber, b->firstName, b->lastName, b->origin, b->destination, b->travelDate, b->isConfirmed, b->timestamp, b->paymentStatus, b->passengerEmail);
+        fprintf(f, "%d|%d|%d|%s|%s|%s|%s|%s|%s|%s|%d|%ld|%s|%s|%s\n",
+                b->id, b->userId, b->flightId, b->ticketNumber, b->seatNumber, b->firstName, b->lastName, b->origin, b->destination, b->travelDate, b->isConfirmed, b->timestamp, b->paymentStatus, b->passengerEmail, b->returnDate);
     }
     fclose(f);
     printf("[STORAGE] Saved %d bookings to '%s'\n", bookingCount, bookings_file_path);
@@ -961,7 +968,7 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
  
     if (strcmp(path, "/api/bookings/enqueue") == 0 && strcmp(method, "POST") == 0) {
         char flightIdStr[20], token[100], seatNumber[10], firstName[50], lastName[50], passengerEmail[100];
-        char origin[50], destination[50], travelDate[30], fareAmount[30];
+        char origin[50], destination[50], travelDate[30], returnDate[30], fareAmount[30];
         
         char paymentMethod[20], cardNumber[30], cardExpiry[10], cardCvv[10];
         char bankName[50], accountNumber[30], branchName[50], ifscCode[20], upiId[50];
@@ -975,6 +982,7 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
         extract_json_value(body, "origin", origin, sizeof(origin));
         extract_json_value(body, "destination", destination, sizeof(destination));
         extract_json_value(body, "travelDate", travelDate, sizeof(travelDate));
+        extract_json_value(body, "returnDate", returnDate, sizeof(returnDate));
         extract_json_value(body, "fareAmount", fareAmount, sizeof(fareAmount));
         
         extract_json_value(body, "paymentMethod", paymentMethod, sizeof(paymentMethod));
@@ -1111,6 +1119,7 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
         strcpy(b->origin, origin);
         strcpy(b->destination, destination);
         strcpy(b->travelDate, travelDate);
+        strcpy(b->returnDate, returnDate);
         strcpy(b->paymentStatus, "SUCCESS");
         strcpy(b->passengerEmail, passengerEmail);
         
@@ -1396,9 +1405,9 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
                         }
                     }
                 }
-                snprintf(bstr, sizeof(bstr), "{\"ticketNumber\":\"%s\",\"flightNumber\":\"%s\",\"origin\":\"%s\",\"destination\":\"%s\",\"seatNumber\":\"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\",\"travelDate\":\"%s\",\"status\":\"%s\",\"queuePosition\":%d}",
+                snprintf(bstr, sizeof(bstr), "{\"ticketNumber\":\"%s\",\"flightNumber\":\"%s\",\"origin\":\"%s\",\"destination\":\"%s\",\"seatNumber\":\"%s\",\"firstName\":\"%s\",\"lastName\":\"%s\",\"travelDate\":\"%s\",\"returnDate\":\"%s\",\"status\":\"%s\",\"queuePosition\":%d}",
                     bookings[i].ticketNumber, f ? f->flightNumber : "", bookings[i].origin, bookings[i].destination, bookings[i].seatNumber, bookings[i].firstName, bookings[i].lastName,
-                    bookings[i].travelDate,
+                    bookings[i].travelDate, bookings[i].returnDate,
                     bookings[i].isConfirmed == 1 ? "CONFIRMED" : (bookings[i].isConfirmed == -1 ? "CANCELLED" : "WAITLISTED"), position);
                 strcat(json, bstr);
                 count++;

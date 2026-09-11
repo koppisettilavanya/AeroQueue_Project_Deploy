@@ -236,8 +236,12 @@
                     <p class="value" id="dispSeat" style="color: var(--primary);">--</p>
                 </div>
                 <div>
-                    <p class="label">Date & Time</p>
+                    <p class="label">Travel Date</p>
                     <p class="value" id="dispDateTime">-- | 10:00 AM</p>
+                </div>
+                <div id="returnDateContainer" style="display: none;">
+                    <p class="label">Return Date</p>
+                    <p class="value" id="dispReturnDate">--</p>
                 </div>
                 <div>
                     <p class="label">Passengers</p>
@@ -276,6 +280,7 @@
         const fromCity = localStorage.getItem('fromCity') || '';
         const toCity = localStorage.getItem('toCity') || '';
         const travelDate = localStorage.getItem('travelDate') || '--';
+        const returnDate = localStorage.getItem('returnDate');
         const fareTotal = localStorage.getItem('finalPaymentTotal') || localStorage.getItem('seatFare') || localStorage.getItem('ticketPrice') || '--';
         const numPassengers = localStorage.getItem('totalPassengers') || '1';
         const airlineName = localStorage.getItem('airlineName') || 'AQ-402';
@@ -291,6 +296,12 @@
             document.getElementById('dispPassenger').innerText = ((fName || '') + ' ' + (lName || '')).trim();
         }
         document.getElementById('dispDateTime').innerText = `${travelDate} | 10:00 AM`;
+
+        if (returnDate && returnDate.trim() !== '') {
+            document.getElementById('returnDateContainer').style.display = 'block';
+            document.getElementById('dispReturnDate').innerText = `${returnDate} | 10:00 AM`;
+        }
+
         document.getElementById('dispPassengersCount').innerText = `${numPassengers} Traveler${numPassengers > 1 ? 's' : ''}`;
         document.getElementById('dispFare').innerText = fareTotal;
         document.getElementById('dispFlightNumber').innerText = airlineName;

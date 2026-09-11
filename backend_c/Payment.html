@@ -352,12 +352,7 @@
  
             document.getElementById('finalSeat').innerText = savedSeat.includes(",") ? "Seats " + savedSeat : (savedSeat.startsWith("Seat") ? savedSeat : "Seat " + savedSeat);
             document.getElementById('seatTotal').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
-            document.getElementById('finalPrice').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
-            
-            updatePayButtonText(initialTotalAmount);
-        };
- 
-        function applyCouponCode() {
+            document.getElementById('finalPrice').innerText = "�        async function applyCouponCode() {
             const codeInput = document.getElementById('couponInput').value.trim().toUpperCase();
             const msgBox = document.getElementById('couponMsg');
             const discountRow = document.getElementById('discountRow');
@@ -369,20 +364,59 @@
                 msgBox.style.display = "block";
                 return;
             }
- 
+
             let discountAmount = 0;
- 
+
             if (codeInput === "FLYNEW30") {
-                discountAmount = 300;
+                // Determine whether the user has already completed a booking using backend
+                const token = localStorage.getItem('token') || '';
+                let userHasPriorBooking = false;
+                if (token) {
+                    try {
+                        const dashResp = await fetch('https://aeroqueue-project-deploy-ko88.onrender.com/api/user/dashboard', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token })
+                        });
+                        if (dashResp.ok) {
+                            const dashData = await dashResp.json();
+                            if (dashData && dashData.bookings && dashData.bookings.length > 0) {
+                                const activeBookings = dashData.bookings.filter(b => b.status === 'CONFIRMED' || b.status === 'WAITLISTED');
+                                if (activeBookings.length > 0) {
+                                    userHasPriorBooking = true;
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Error fetching user booking history for coupon validation:", err);
+                    }
+                }
+
+                if (userHasPriorBooking) {
+                    msgBox.style.color = "#ef4444";
+                    msgBox.innerText = "This coupon is valid only for your first booking.";
+                    msgBox.style.display = "block";
+                    return;
+                }
+
+                discountAmount = Math.round(initialTotalAmount * 0.30);
+                if (discountAmount <= 0) discountAmount = 300;
                 msgBox.style.color = "var(--success)";
-                msgBox.innerText = "Success! Flat ₹300 discount applied.";
+                msgBox.innerText = `Success! Flat 30% discount (-₹${discountAmount.toLocaleString('en-IN')}) applied.`;
             } 
             else if (codeInput === "STUDENT24") {
                 discountAmount = Math.round(initialTotalAmount * 0.10);
                 msgBox.style.color = "var(--success)";
                 msgBox.innerText = `Success! Student 10% discount (-₹${discountAmount.toLocaleString('en-IN')}) applied.`;
             } 
-            else if (codeInput === "HDFC150") {
+            else if (codeInput === "HDFC150" || codeInput === "HDFCSAVE") {
+                const hdfcExpiry = new Date('2028-12-31T23:59:59');
+                if (new Date() > hdfcExpiry) {
+                    msgBox.style.color = "#ef4444";
+                    msgBox.innerText = "This HDFC offer expired on December 31, 2028.";
+                    msgBox.style.display = "block";
+                    return;
+                }
                 if (currentPaymentMethod !== 'card') {
                     msgBox.style.color = "#ef4444";
                     msgBox.innerText = "This coupon is only valid for HDFC Card transactions. Please select 'Card' payment above.";
@@ -402,6 +436,9 @@
             else {
                 msgBox.style.color = "#ef4444";
                 msgBox.innerText = "Invalid coupon code. Please check and try again.";
+                msgBox.style.display = "block";
+                return;
+            }nvalid coupon code. Please check and try again.";
                 msgBox.style.display = "block";
                 return;
             }

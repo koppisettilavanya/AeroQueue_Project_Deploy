@@ -703,7 +703,7 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
-                        phone: 'Supabase Sync',
+                        phone: (localData.user && localData.user.phone) ? localData.user.phone : '',
                         password: password
                     })
                 });
