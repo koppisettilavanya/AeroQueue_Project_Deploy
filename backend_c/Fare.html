@@ -342,13 +342,7 @@ function selectTime(el) {
 
 document.getElementById("continueBtn").addEventListener("click", () => {
     const finalPrice = document.getElementById("footer-total").innerText;
-    
     localStorage.setItem("seatFare", finalPrice); 
-    
-    if(!localStorage.getItem("selectedSeat")) {
-        localStorage.setItem("selectedSeat", "Assigned on Check-in");
-    }
-    
     window.location.href = "Passenger.html"; 
 });
 </script>

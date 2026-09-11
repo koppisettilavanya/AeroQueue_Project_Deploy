@@ -271,7 +271,7 @@
  
             <div id="error-msg">Please fill in all details to proceed.</div>
  
-            <form id="paymentForm">
+            <form id="paymentForm" onsubmit="event.preventDefault(); processPayment();">
                 <div id="card-section" class="form-section active">
                     <label>Cardholder Name</label>
                     <input type="text" id="cardName" placeholder="e.g. JOHN DOE" class="required">
@@ -436,8 +436,31 @@
                 }
             });
  
+            if (currentPaymentMethod === 'card') {
+                const cardName = document.getElementById('cardName').value.trim();
+                const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                const cardExpiry = document.getElementById('cardExpiry').value.trim();
+                const cardCvv = document.getElementById('cardCvv').value.trim();
+                if (!cardName || cardNumber.length < 15 || cardNumber.length > 16 || cardExpiry.length !== 5 || !cardExpiry.includes('/') || (cardCvv.length !== 3 && cardCvv.length !== 4)) {
+                    allFilled = false;
+                }
+            } else if (currentPaymentMethod === 'netbanking') {
+                const bankName = document.getElementById('bankName').value;
+                const accountNumber = document.getElementById('accountNumber').value.trim();
+                const branchName = document.getElementById('branchName').value.trim();
+                const ifscCode = document.getElementById('ifscCode').value.trim();
+                if (!bankName || accountNumber.length < 8 || !branchName || ifscCode.length !== 11) {
+                    allFilled = false;
+                }
+            } else if (currentPaymentMethod === 'phonepe') {
+                const upiId = document.getElementById('upiId').value.trim();
+                if (!upiId || !upiId.includes('@')) {
+                    allFilled = false;
+                }
+            }
+
             if (!allFilled) {
-                errorMsg.innerText = 'Please fill in all details to proceed.';
+                errorMsg.innerText = 'Please fill in all required payment details correctly to proceed.';
                 errorMsg.style.display = 'block';
                 return;
             }
@@ -508,14 +531,14 @@
                         }, 1500);
                     } else {
                         const errData = await response.json().catch(() => ({}));
-                        errorMsg.innerText = 'Failed to create booking on server: ' + (errData.error || 'Unknown error');
+                        errorMsg.innerText = 'Payment validation / booking creation failed: ' + (errData.error || 'Invalid details');
                         errorMsg.style.display = 'block';
                         btn.innerText = "CONFIRM & PAY NOW →";
                         btn.disabled = false;
                     }
                 } catch (err) {
                     console.error(err);
-                    errorMsg.innerText = 'Server error. Make sure the AeroQueue backend is running.';
+                    errorMsg.innerText = 'Server connection error. Please try again.';
                     errorMsg.style.display = 'block';
                     btn.innerText = "CONFIRM & PAY NOW →";
                     btn.disabled = false;

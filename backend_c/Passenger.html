@@ -220,7 +220,7 @@
     }
 
     const savedSeatsStr = localStorage.getItem("selectedSeat");
-    const savedSeats = savedSeatsStr && !savedSeatsStr.includes("Assigned") ? savedSeatsStr.split(", ") : [];
+    const savedSeats = (savedSeatsStr && !savedSeatsStr.includes("Assigned") && !savedSeatsStr.includes("Not Selected")) ? savedSeatsStr.split(", ") : [];
 
     let seatIndex = 0;
     for (let i = 1; i <= adults; i++) {

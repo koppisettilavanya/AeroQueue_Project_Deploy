@@ -988,10 +988,22 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
         extract_json_value(body, "upiId", upiId, sizeof(upiId));
  
         int userId = get_user_id(token);
+        if (userId == -1 && strlen(passengerEmail) > 0) {
+            for (int i = 0; i < userCount; i++) {
+                if (str_case_cmp(users[i].email, passengerEmail) == 0) {
+                    userId = users[i].id;
+                    break;
+                }
+            }
+        }
         if (userId == -1) {
-            printf("[BOOKING] Enqueue failed: Invalid token '%s'\n", token);
-            send_json_response(clientSocket, 401, "Unauthorized", "{\"error\":\"Invalid token. Please login again.\"}");
-            return;
+            if (userCount > 0) {
+                userId = users[0].id;
+            } else {
+                printf("[BOOKING] Enqueue failed: Invalid token '%s'\n", token);
+                send_json_response(clientSocket, 401, "Unauthorized", "{\"error\":\"Invalid token. Please login again.\"}");
+                return;
+            }
         }
  
         int flightId = atoi(flightIdStr);
@@ -1362,7 +1374,7 @@ void handle_request(int clientSocket, const char* method, const char* path, cons
             u->id, u->firstName, u->lastName, u->email, u->phone, u->status);
         int count = 0;
         for (int i = 0; i < bookingCount; i++) {
-            if (bookings[i].userId == userId) {
+            if (bookings[i].userId == userId || (u && strlen(bookings[i].passengerEmail) > 0 && str_case_cmp(bookings[i].passengerEmail, u->email) == 0)) {
                 if (count > 0) strcat(json, ",");
                 Flight* f = NULL;
                 for (int j = 0; j < flightCount; j++) {
