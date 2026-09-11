@@ -583,7 +583,7 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
-    const localAuthUrl = 'http://localhost:5000';
+    const localAuthUrl = 'https://aeroqueue-auth.onrender.com';
     const cBackendUrl = 'https://aeroqueue-project-deploy-ko88.onrender.com';
  
     if (currentMode === 'signup') {
@@ -615,6 +615,7 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
             const localData = await localResponse.json().catch(() => ({}));
  
             if (!localResponse.ok) {
+                console.error('Supabase Registration failed:', localResponse.status, localData);
                 alert('Supabase Registration failed! ' + (localData.message || ''));
                 return;
             }
@@ -656,7 +657,7 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
                 }
             }
         } catch (err) {
-            console.error(err);
+            console.error('Registration server connection error:', err);
             alert('Could not connect to server during registration.');
         }
     } else {
@@ -672,6 +673,7 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
             const localData = await localResponse.json().catch(() => ({}));
  
             if (!localResponse.ok) {
+                console.error('Supabase Login failed:', localResponse.status, localData);
                 alert('Supabase Login failed! ' + (localData.message || 'Invalid credentials'));
                 return;
             }
@@ -715,7 +717,7 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
                 }
             }
         } catch (err) {
-            console.error(err);
+            console.error('Login server connection error:', err);
             alert('Could not connect to server during login.');
         }
     }

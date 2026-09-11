@@ -8,13 +8,26 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        "https://aeroqueue-project-deploy-ko88.onrender.com",
+        "http://localhost:5000",
+        "http://localhost:3000"
+    ],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
 app.use(express.json());
 
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+    console.error("Warning: Missing SUPABASE_URL or SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY environment variables!");
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 // REGISTER
