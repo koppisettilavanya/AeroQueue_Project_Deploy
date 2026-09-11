@@ -236,7 +236,8 @@
             </div>
  
             <div class="fare-summary">
-                <div class="fare-row"><span>Seat Choice Total</span><span id="seatTotal">₹0</span></div>
+                <div class="fare-row"><span>Base Fare</span><span id="baseFareRow">₹0</span></div>
+                <div class="fare-row"><span>Taxes & Fees</span><span id="taxesRow">₹0</span></div>
                 <div class="fare-row" id="discountRow" style="display: none; color: var(--success);">
                     <span>Discount Applied</span>
                     <span id="discountValue">-₹0</span>
@@ -351,8 +352,17 @@
             initialTotalAmount = parseInt(calculatedTotalStr.replace(/[^\d]/g, '')) || 4500;
  
             document.getElementById('finalSeat').innerText = savedSeat.includes(",") ? "Seats " + savedSeat : (savedSeat.startsWith("Seat") ? savedSeat : "Seat " + savedSeat);
-            document.getElementById('seatTotal').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
-            document.getElementById('finalPrice').innerText = "�        async function applyCouponCode() {
+            const baseFareStr = localStorage.getItem("baseFareTotal") || ("₹" + Math.round(initialTotalAmount * 0.8).toLocaleString('en-IN'));
+            const taxesStr = localStorage.getItem("taxesTotal") || ("₹" + Math.round(initialTotalAmount * 0.2).toLocaleString('en-IN'));
+
+            document.getElementById('finalSeat').innerText = savedSeat.includes(",") ? "Seats " + savedSeat : (savedSeat.startsWith("Seat") ? savedSeat : "Seat " + savedSeat);
+            if (document.getElementById('baseFareRow')) document.getElementById('baseFareRow').innerText = baseFareStr;
+            if (document.getElementById('taxesRow')) document.getElementById('taxesRow').innerText = taxesStr;
+            document.getElementById('finalPrice').innerText = "₹" + initialTotalAmount.toLocaleString('en-IN');
+            updatePayButtonText(initialTotalAmount);
+        };
+
+        async function applyCouponCode() {
             const codeInput = document.getElementById('couponInput').value.trim().toUpperCase();
             const msgBox = document.getElementById('couponMsg');
             const discountRow = document.getElementById('discountRow');
@@ -519,6 +529,7 @@
                 const origin = localStorage.getItem('fromCity') || '';
                 const destination = localStorage.getItem('toCity') || '';
                 const travelDate = localStorage.getItem('travelDate') || '';
+                const returnDate = localStorage.getItem('returnDate') || '';
  
                 // Build payment fields based on selected method
                 const payload = {
@@ -531,6 +542,7 @@
                     origin: origin,
                     destination: destination,
                     travelDate: travelDate,
+                    returnDate: returnDate,
                     paymentMethod: currentPaymentMethod,
                     fareAmount: document.getElementById('finalPrice').innerText
                 };

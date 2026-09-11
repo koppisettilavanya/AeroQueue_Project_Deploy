@@ -429,6 +429,8 @@
                 statusLabel.innerText = "CHOSEN SEATS (" + selectedSeats.length + "/" + totalPassengers + ")";
                 statusLabel.style.color = "var(--primary)";
                 localStorage.setItem("selectedSeat", selectedSeats.join(", "));
+                localStorage.setItem("baseFareTotal", "₹" + totalBase.toLocaleString('en-IN'));
+                localStorage.setItem("taxesTotal", "₹" + (totalFuel + totalAirport + totalService + totalGst).toLocaleString('en-IN'));
                 localStorage.setItem("finalPaymentTotal", "₹" + totalAmt.toLocaleString('en-IN'));
                 
                 if (selectedSeats.length === totalPassengers) {
