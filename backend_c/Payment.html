@@ -448,10 +448,7 @@
                 msgBox.innerText = "Invalid coupon code. Please check and try again.";
                 msgBox.style.display = "block";
                 return;
-            }nvalid coupon code. Please check and try again.";
-                msgBox.style.display = "block";
-                return;
-            }
+            
  
             let updatedFinalTotal = Math.max(0, initialTotalAmount - discountAmount);
             isCouponApplied = true;
@@ -596,12 +593,12 @@
         }
  
         document.getElementById('cardNumber').addEventListener("input", (e) => {
-            let v = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
-            let matches = v.match(/\d{4,16}/g);
-            let match = matches && matches[0] || '';
+            let v = e.target.value.replace(/\D/g, '').substring(0, 16);
             let parts = [];
-            for (let i=0, len=match.length; i<len; i+=4) { parts.push(match.substring(i, i+4)); }
-            if (parts.length) { e.target.value = parts.join(' '); }
+            for (let i = 0; i < v.length; i += 4) {
+                parts.push(v.substring(i, i + 4));
+            }
+            e.target.value = parts.join(' ');
         });
     </script>
 </body>
